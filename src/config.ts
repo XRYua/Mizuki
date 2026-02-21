@@ -22,10 +22,10 @@ import { LinkPreset } from "./types/config";
 const SITE_LANG = "ja"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
 const SITE_TIMEZONE = 8; //设置你的网站时区 from -12 to 12 default in UTC+8
 export const siteConfig: SiteConfig = {
-	title: "Mizuki",
+	title: "XRYua",
 	subtitle: "One demo website",
-	siteURL: "https://mizuki.mysqil.com/", // 请替换为你的站点URL，以斜杠结尾
-	siteStartDate: "2025-01-01", // 站点开始运行日期，用于站点统计组件计算运行天数
+	siteURL: "https://xryua.eu.cc/", // 请替换为你的站点URL，以斜杠结尾
+	siteStartDate: "2002-03-18", // 站点开始运行日期，用于站点统计组件计算运行天数
 
 	timeZone: SITE_TIMEZONE,
 
@@ -67,7 +67,7 @@ export const siteConfig: SiteConfig = {
 	},
 
 	bangumi: {
-		userId: "your-bangumi-id", // 在此处设置你的Bangumi用户ID，可以设置为 "sai" 测试
+		userId: "fogyua", // 在此处设置你的Bangumi用户ID，可以设置为 "sai" 测试
 		fetchOnDev: false, // 是否在开发环境下获取 Bangumi 数据（默认 false），获取前先执行 pnpm build 构建 json 文件
 	},
 
@@ -85,7 +85,7 @@ export const siteConfig: SiteConfig = {
 	},
 
 	anime: {
-		mode: "local", // 番剧页面模式："bangumi" 使用Bangumi API，"local" 使用本地配置，"bilibili" 使用Bilibili API
+		mode: "bangumi", // 番剧页面模式："bangumi" 使用Bangumi API，"local" 使用本地配置，"bilibili" 使用Bilibili API
 	},
 
 	// 文章列表布局配置
@@ -100,7 +100,7 @@ export const siteConfig: SiteConfig = {
 	// 标签样式配置
 	tagStyle: {
 		// 是否使用新样式（悬停高亮样式）还是旧样式（外框常亮样式）
-		useNewStyle: false,
+		useNewStyle: true,
 	},
 
 	// 壁纸模式配置
@@ -160,7 +160,7 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true, // 在主页显示自定义文本
-			title: "わたしの部屋", // 主页横幅主标题
+			title: "睦", // 主页横幅主标题
 
 			subtitle: [
 				"特別なことはないけど、君がいると十分です",
@@ -379,7 +379,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "GitHub",
 			icon: "fa7-brands:github",
-			url: "https://github.com/matsuzaka-yuki",
+			url: "https://github.com/XRYua",
 		},
 		{
 			name: "Codeberg",
@@ -402,7 +402,7 @@ export const licenseConfig: LicenseConfig = {
 
 // Permalink 固定链接配置
 export const permalinkConfig: PermalinkConfig = {
-	enable: false, // 是否启用全局 permalink 功能，关闭时使用默认的文件名作为链接
+	enable: true, // 是否启用全局 permalink 功能，关闭时使用默认的文件名作为链接
 	/**
 	 * permalink 格式模板
 	 * 支持的占位符：
@@ -469,7 +469,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 };
 
 export const footerConfig: FooterConfig = {
-	enable: false, // 是否启用Footer HTML注入功能
+	enable: true, // 是否启用Footer HTML注入功能
 	customHtml: "", // HTML格式的自定义页脚信息，例如备案号等，默认留空
 	// 也可以直接编辑 FooterConfig.html 文件来添加备案号等自定义内容
 	// 注意：若 customHtml 不为空，则使用 customHtml 中的内容；若 customHtml 留空，则使用 FooterConfig.html 文件中的内容
@@ -588,7 +588,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 };
 
 export const sakuraConfig: SakuraConfig = {
-	enable: false, // 默认关闭樱花特效
+	enable: true, // 默认关闭樱花特效
 	sakuraNum: 21, // 樱花数量
 	limitTimes: -1, // 樱花越界限制次数，-1为无限循环
 	size: {
