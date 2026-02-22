@@ -29,7 +29,7 @@
 /* 导入 LXGWWenKai 字体 */
 @font-face {
   font-family: "LXGWWenKai";
-  src: url("/assets/font/LXGWWenKaiGBScreen.ttf") format("truetype");
+  src: url("/assets/font/LXGWWenKaiGBScreen.woff2") format("woff2");
   font-style: normal;
   font-weight: 483;
   font-display: swap;
