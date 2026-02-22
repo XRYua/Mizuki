@@ -220,10 +220,10 @@ export const siteConfig: SiteConfig = {
 		},
 		cjkFont: {
 			// 中日韩字体 - 作为回退字体
-			fontFamily: "LXGWWenKaiGBScreen",
+			fontFamily: "萝莉体 第二代",
 			fontWeight: "483",
-			localFonts: ["LXGWWenKaiGBScreen.ttf"],
-			enableCompress: false, // 启用字体子集优化，减少字体文件大小
+			localFonts: ["萝莉体 第二代.woff2"],
+			enableCompress: true, // 启用字体子集优化，减少字体文件大小
 		},
 	},
 	showLastModified: true, // 控制“上次编辑”卡片显示的开关
