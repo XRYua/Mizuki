@@ -489,7 +489,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 组件类型：用户资料组件
 			type: "profile",
 			// 组件位置："top" 表示固定在顶部
-			position: "top",
+			position: "sticky",
 			// CSS 类名，用于应用样式和动画
 			class: "onload-animation",
 			// 动画延迟时间（毫秒），用于错开动画效果
@@ -516,8 +516,8 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			animationDelay: 150,
 			// 响应式配置
 			responsive: {
-				// 折叠阈值：当分类数量超过5个时自动折叠
-				collapseThreshold: 5,
+				// 折叠阈值：当分类数量超过6个时自动折叠
+				collapseThreshold: 6,
 			},
 		},
 		{
@@ -559,9 +559,9 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 
 	// 侧栏组件布局配置
 	components: {
-		left: ["profile", "announcement", "categories", "tags"],
-		right: ["site-stats", "calendar"],
-		drawer: ["profile", "announcement", "categories", "tags"],
+		left: ["profile", "announcement", "categories", "tags", "calendar", "site-stats"],
+		right: [],
+		drawer: ["profile", "announcement", "categories", "tags", "calendar", "site-stats"],
 	},
 
 	// 默认动画配置
