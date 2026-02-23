@@ -106,7 +106,7 @@ export const siteConfig: SiteConfig = {
 	// 壁纸模式配置
 	wallpaperMode: {
 		// 默认壁纸模式：banner=顶部横幅，fullscreen=全屏壁纸，none=无壁纸
-		defaultMode: "fullscreen",
+		defaultMode: "banner",
 		// 整体布局方案切换按钮显示设置（默认："desktop"）
 		// "off" = 不显示
 		// "mobile" = 仅在移动端显示
@@ -489,7 +489,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 			// 组件类型：用户资料组件
 			type: "profile",
 			// 组件位置："top" 表示固定在顶部
-			position: "sticky",
+			position: "top",
 			// CSS 类名，用于应用样式和动画
 			class: "onload-animation",
 			// 动画延迟时间（毫秒），用于错开动画效果
