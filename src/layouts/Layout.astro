@@ -1,4 +1,5 @@
 ---
+import Analytics from "@vercel/analytics/astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import MusicPlayer from "@components/widget/MusicPlayer.svelte";
 import Pio from "@components/widget/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
@@ -169,9 +170,7 @@ if (siteConfig.font) {
 	data-overlayscrollbars-initialize
 >
 	<head>
-        <script>
-          import Analytics from '@vercel/analytics/astro';
-        </script>
+		<Analytics />
 		<!-- 第三方分析脚本 - 延迟加载优化 -->
 		<script is:inline>
 			// 使用 requestIdleCallback 延迟加载第三方脚本
@@ -294,7 +293,7 @@ if (siteConfig.font) {
 			const expressiveTheme = isDark ? "github-dark" : "github-light";
 			const currentTheme =
 				document.documentElement.getAttribute("data-theme");
-			// 只在主题不同时才更新，避免触发不必要的重绘
+			// 只在主题不同时才更新，避免���发不必要的重绘
 			if (currentTheme !== expressiveTheme) {
 				document.documentElement.setAttribute(
 					"data-theme",
