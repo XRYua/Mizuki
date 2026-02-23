@@ -106,13 +106,13 @@ export const siteConfig: SiteConfig = {
 	// 壁纸模式配置
 	wallpaperMode: {
 		// 默认壁纸模式：banner=顶部横幅，fullscreen=全屏壁纸，none=无壁纸
-		defaultMode: "banner",
+		defaultMode: "fullscreen",
 		// 整体布局方案切换按钮显示设置（默认："desktop"）
 		// "off" = 不显示
 		// "mobile" = 仅在移动端显示
 		// "desktop" = 仅在桌面端显示
 		// "both" = 在所有设备上显示
-		showModeSwitchOnMobile: "desktop",
+		showModeSwitchOnMobile: "both",
 	},
 
 	banner: {
@@ -168,6 +168,7 @@ export const siteConfig: SiteConfig = {
 				"君ってさ、知らないうちに私の毎日になってたよ",
 				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
 				"今日はなんでもない日。でも、ちょっとだけいい日",
+				"过客，你携秋水揽星河",
 			],
 			typewriter: {
 				enable: true, // 启用副标题打字机效果
@@ -454,7 +455,7 @@ export const announcementConfig: AnnouncementConfig = {
 		enable: true, // 启用链接
 		text: "Learn More", // 链接文本
 		url: "/about/", // 链接 URL
-		external: false, // 内部链接
+		external: true, // 内部链接
 	},
 };
 
@@ -590,9 +591,9 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 export const sakuraConfig: SakuraConfig = {
 	enable: true, // 默认关闭樱花特效
 	sakuraNum: 21, // 樱花数量
-	limitTimes: -1, // 樱花越界限制次数，-1为无限循环
+	limitTimes: 6, // 樱花越界限制次数，-1为无限循环
 	size: {
-		min: 0.5, // 樱花最小尺寸倍数
+		min: 0.4, // 樱花最小尺寸倍数
 		max: 1.1, // 樱花最大尺寸倍数
 	},
 	opacity: {
@@ -605,7 +606,7 @@ export const sakuraConfig: SakuraConfig = {
 			max: -1.2, // 水平移动速度最大值
 		},
 		vertical: {
-			min: 1.5, // 垂直移动速度最小值
+			min: 1.6, // 垂直移动速度最小值
 			max: 2.2, // 垂直移动速度最大值
 		},
 		rotation: 0.03, // 旋转速度
