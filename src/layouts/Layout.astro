@@ -8,6 +8,7 @@ import {
 	profileConfig,
 	siteConfig,
 } from "@/config";
+import Analytics from '@vercel/analytics/astro';
 
 const BANNER_HEIGHT = 35;
 const BANNER_HEIGHT_EXTEND = 30;
@@ -169,10 +170,7 @@ if (siteConfig.font) {
 	data-overlayscrollbars-initialize
 >
 	<head>
-        <script>
-          import { inject } from '@vercel/analytics';
-          inject();
-        </script>
+		<Analytics />
 		<!-- 第三方分析脚本 - 延迟加载优化 -->
 		<script is:inline>
 			// 使用 requestIdleCallback 延迟加载第三方脚本
@@ -722,7 +720,7 @@ function disableAnimation() {
 				nextItem.classList.remove("opacity-0", "scale-110");
 			}
 
-			// 初始化：隐藏所有图片，只显示第一张有效图片
+			// 初始化：隐藏所有图片���只显示第一张有效图片
 			carouselItems.forEach((item) => {
 				item.classList.add("opacity-0", "scale-110");
 				item.classList.remove("opacity-100", "scale-100");
