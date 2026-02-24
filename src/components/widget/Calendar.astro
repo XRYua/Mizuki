@@ -133,8 +133,16 @@ const yearSuffix = isChinese ? "年" : " ";
 	define:vars={{
 		monthNames,
 		yearSuffix,
+		siteTimeZone: siteConfig.timeZone,
 	}}
 >
+	{
+		const calendarWidgets = Array.from(document.querySelectorAll("#calendar-widget"));
+		calendarWidgets.forEach((widgetRoot) => {
+			if (!(widgetRoot instanceof HTMLElement)) return;
+			if (widgetRoot.dataset.calendarInitialized === "true") return;
+			widgetRoot.dataset.calendarInitialized = "true";
+
 	let allPostsData = [];
 	const postDateMap = {};
 	const postsByMonth = {};
@@ -192,7 +200,23 @@ const yearSuffix = isChinese ? "年" : " ";
 		});
 	}
 
-	const now = new Date();
+	function getTodayByTimeZone(timeZone) {
+		if (!timeZone) return new Date();
+		const formatter = new Intl.DateTimeFormat("en-CA", {
+			timeZone,
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+		});
+		const parts = formatter.formatToParts(new Date());
+		const year = Number(parts.find((item) => item.type === "year")?.value);
+		const month = Number(parts.find((item) => item.type === "month")?.value);
+		const day = Number(parts.find((item) => item.type === "day")?.value);
+		if (!year || !month || !day) return new Date();
+		return new Date(year, month - 1, day);
+	}
+
+	const now = getTodayByTimeZone(siteTimeZone);
 	const todayYear = now.getFullYear();
 	const todayMonth = now.getMonth();
 	const todayDate = now.getDate();
@@ -203,18 +227,20 @@ const yearSuffix = isChinese ? "年" : " ";
 	let currentView = "day";
 
 	const dom = {
-		titleContainer: document.getElementById("calendar-title-container"),
-		title: document.getElementById("calendar-title"),
-		prevBtn: document.getElementById("prev-month-btn"),
-		nextBtn: document.getElementById("next-month-btn"),
-		backTodayBtn: document.getElementById("back-to-today-btn"),
-		calendarView: document.getElementById("calendar-view"),
-		selectionPanel: document.getElementById("selection-panel"),
-		selectionContent: document.getElementById("selection-content"),
-		grid: document.getElementById("calendar-grid"),
-		postsList: document.getElementById("calendar-posts-list"),
-		divider: document.getElementById("calendar-posts-divider"),
+		titleContainer: widgetRoot.querySelector("#calendar-title-container"),
+		title: widgetRoot.querySelector("#calendar-title"),
+		prevBtn: widgetRoot.querySelector("#prev-month-btn"),
+		nextBtn: widgetRoot.querySelector("#next-month-btn"),
+		backTodayBtn: widgetRoot.querySelector("#back-to-today-btn"),
+		calendarView: widgetRoot.querySelector("#calendar-view"),
+		selectionPanel: widgetRoot.querySelector("#selection-panel"),
+		selectionContent: widgetRoot.querySelector("#selection-content"),
+		grid: widgetRoot.querySelector("#calendar-grid"),
+		postsList: widgetRoot.querySelector("#calendar-posts-list"),
+		divider: widgetRoot.querySelector("#calendar-posts-divider"),
 	};
+
+	if (Object.values(dom).some((el) => !el)) return;
 
 	function getCurrentPostId() {
 		const path = window.location.pathname;
@@ -303,8 +329,7 @@ const yearSuffix = isChinese ? "年" : " ";
 
 		document.addEventListener("click", (e) => {
 			if (currentView === "day") return;
-			const widget = document.getElementById("calendar-widget");
-			if (widget && !widget.contains(e.target)) {
+			if (!widgetRoot.contains(e.target)) {
 				closeSelectionPanel();
 			}
 		});
@@ -493,7 +518,7 @@ const yearSuffix = isChinese ? "年" : " ";
 		dom.selectionContent.innerHTML = html;
 
 		setTimeout(() => {
-			const el = document.getElementById(`year-${currentYear}`);
+			const el = dom.selectionContent.querySelector(`#year-${currentYear}`);
 			if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
 		}, 50);
 	}
@@ -507,7 +532,9 @@ const yearSuffix = isChinese ? "年" : " ";
 		}, 200);
 	}
 
-	init();
+			init();
+		});
+	}
 </script>
 
 <style>
