@@ -133,6 +133,7 @@ const yearSuffix = isChinese ? "年" : " ";
 	define:vars={{
 		monthNames,
 		yearSuffix,
+		siteTimeZone: siteConfig.timeZone,
 	}}
 >
 	{
@@ -199,7 +200,23 @@ const yearSuffix = isChinese ? "年" : " ";
 		});
 	}
 
-	const now = new Date();
+	function getTodayByTimeZone(timeZone) {
+		if (!timeZone) return new Date();
+		const formatter = new Intl.DateTimeFormat("en-CA", {
+			timeZone,
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+		});
+		const parts = formatter.formatToParts(new Date());
+		const year = Number(parts.find((item) => item.type === "year")?.value);
+		const month = Number(parts.find((item) => item.type === "month")?.value);
+		const day = Number(parts.find((item) => item.type === "day")?.value);
+		if (!year || !month || !day) return new Date();
+		return new Date(year, month - 1, day);
+	}
+
+	const now = getTodayByTimeZone(siteTimeZone);
 	const todayYear = now.getFullYear();
 	const todayMonth = now.getMonth();
 	const todayDate = now.getDate();
