@@ -10,6 +10,7 @@ import {
 	getSortedPosts,
 	getTagList,
 } from "../../utils/content-utils";
+import { getPostUrl } from "../../utils/url-utils";
 import WidgetLayout from "./WidgetLayout.astro";
 
 interface Props {
@@ -140,17 +141,23 @@ const lastActivityDate =
 const activityCatalog = [
 	{
 		label: "最后编辑文章",
+		icon: "material-symbols:edit-note-rounded",
 		title: latestEditedPost?.data.title || "-",
+		url: latestEditedPost ? getPostUrl(latestEditedPost) : null,
 		time: lastEditedDate,
 	},
 	{
 		label: "最后发表文章",
+		icon: "material-symbols:publish-rounded",
 		title: latestPost?.data.title || "-",
+		url: latestPost ? getPostUrl(latestPost) : null,
 		time: lastPostDate,
 	},
 	{
 		label: "博客最后改动内容",
+		icon: "material-symbols:history-rounded",
 		title: latestChangedPost?.data.title || latestChangedEntry?.postId || "-",
+		url: latestChangedPost ? getPostUrl(latestChangedPost) : null,
 		time: blogLastChangeDate,
 	},
 ];
@@ -189,7 +196,6 @@ const stats = [
 		icon: "material-symbols:ecg-heart-outline",
 		label: i18n(I18nKey.siteStatsLastUpdate),
 		value: 0, // 将由客户端更新
-		suffix: i18n(I18nKey.siteStatsDaysAgo).replace("{days}", ""),
 		dynamic: true,
 		id: "last-update",
 	},
@@ -233,26 +239,36 @@ const stats = [
 			))
 		}
 	</div>
-	<div class="mt-2 px-2 pb-2">
-		<details class="text-sm text-neutral-700 dark:text-neutral-300">
-			<summary class="cursor-pointer select-none font-medium">
-				最后活动目录
+	<div class="mt-2 px-2 pb-2 border-t border-black/5 dark:border-white/10">
+		<details class="group">
+			<summary class="list-none cursor-pointer select-none flex items-center justify-between py-2 rounded-lg px-2 transition hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]">
+				<span class="font-medium text-sm text-neutral-800 dark:text-neutral-200">最后活动目录</span>
+				<Icon name="material-symbols:keyboard-arrow-down-rounded" class="text-xl text-[var(--primary)] transition-transform group-open:rotate-180" />
 			</summary>
-			<ul class="mt-2 space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
+			<ul class="mt-1 space-y-1">
 				{activityCatalog.map((item) => (
 					<li>
-						<span class="font-medium">{item.label}：</span>
-						<span>{item.title}</span>
-						<span class="ml-1">
-							(
-							{item.time
-								? new Date(item.time).toLocaleString("zh-CN", {
-									dateStyle: "medium",
-									timeStyle: "short",
-								})
-								: "-"}
-							)
-						</span>
+						<div class="group flex items-center justify-between py-2 pl-3 pr-2 rounded-lg gap-3 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition">
+							<div class="flex items-center min-w-0 gap-2">
+								<Icon name={item.icon} class="text-[1.05rem] text-[var(--primary)] shrink-0" />
+								<div class="min-w-0">
+									<div class="text-[11px] text-neutral-500 dark:text-neutral-400">{item.label}</div>
+									{item.url ? (
+										<a href={item.url} class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate hover:text-[var(--primary)] transition">{item.title}</a>
+									) : (
+										<span class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">{item.title}</span>
+									)}
+								</div>
+							</div>
+							<div class="text-[11px] text-right text-neutral-500 dark:text-neutral-400 shrink-0">
+								{item.time
+									? new Date(item.time).toLocaleString("zh-CN", {
+										dateStyle: "short",
+										timeStyle: "medium",
+									})
+									: "-"}
+							</div>
+						</div>
 					</li>
 				))}
 			</ul>
@@ -281,20 +297,23 @@ const stats = [
 		// 更新最后活动时间
 		if (lastActivityDate) {
 			const lastActivity = new Date(lastActivityDate);
-			const timeSinceLastPost = Math.abs(
-				today.getTime() - lastActivity.getTime(),
-			);
-			const daysSinceLastUpdate = Math.floor(
-				timeSinceLastPost / (1000 * 60 * 60 * 24),
-			);
+			const elapsedMs = Math.abs(today.getTime() - lastActivity.getTime());
+			const days = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
 
 			const lastUpdateElements = document.querySelectorAll(
 				'[data-stat-id="last-update"]',
 			);
 			if (lastUpdateElements.length > 0) {
-				lastUpdateElements.forEach(element => {
-					element.textContent = daysSinceLastUpdate.toString();
-				})
+				lastUpdateElements.forEach((element) => {
+					if (days < 16) {
+						const hours = Math.floor((elapsedMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+						const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
+						const seconds = Math.floor((elapsedMs % (1000 * 60)) / 1000);
+						element.textContent = `${days}天 ${hours}时 ${minutes}分 ${seconds}秒`;
+					} else {
+						element.textContent = `${days} 天前`;
+					}
+				});
 			}
 		}
 	}
@@ -303,5 +322,5 @@ const stats = [
 	updateDynamicStats();
 
 	// 每小时更新一次（可选，因为天数变化较慢）
-	setInterval(updateDynamicStats, 60 * 60 * 1000);
+	setInterval(updateDynamicStats, 1000);
 </script>
