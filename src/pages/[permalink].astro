@@ -9,9 +9,9 @@
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import Comment from "@components/comment/index.astro";
+import Encryptor from "@components/Encryptor.astro";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
-import PasswordProtection from "@components/PasswordProtection.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
@@ -20,7 +20,6 @@ import { getFileDirFromPath, getPostUrlBySlug } from "@utils/url-utils";
 import { initPostIdMap, hasCustomPermalink, generatePermalinkSlug } from "@utils/permalink-utils";
 import { permalinkConfig } from "@/config";
 import { Icon } from "astro-icon/components";
-import CryptoJS from "crypto-js";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { licenseConfig } from "src/config";
@@ -71,17 +70,7 @@ const { Content, headings } = await render(entry);
 
 const { remarkPluginFrontmatter } = await render(entry);
 
-// 处理加密逻辑
-let encryptedContent = "";
 let isEncrypted = entry.data.encrypted && entry.data.password;
-
-if (isEncrypted) {
-    const contentToEncrypt = "MIZUKI-VERIFY:" + entry.body;
-    encryptedContent = CryptoJS.AES.encrypt(
-        contentToEncrypt,
-        String(entry.data.password)
-    ).toString();
-}
 
 dayjs.extend(utc);
 const lastModified = dayjs(entry.data.updated || entry.data.published)
@@ -215,9 +204,11 @@ const jsonLd = {
 
             {
                 isEncrypted ? (
-                    <PasswordProtection
-                        encryptedContent={encryptedContent}
-                    />
+                    <Encryptor password={entry.data.password}>
+                        <Markdown class="mb-6 markdown-content onload-animation">
+                            <Content />
+                        </Markdown>
+                    </Encryptor>
                 ) : (
                     <>
                         <Markdown class="mb-6 markdown-content onload-animation">
