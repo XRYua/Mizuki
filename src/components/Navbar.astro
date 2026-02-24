@@ -40,6 +40,8 @@ const logoSrc = rawLogo.match(/^(http|https|\/\/)/) ? rawLogo : url(rawLogo);
 
 const rawIcon = siteConfig.navbarTitle?.icon || "/assets/home/home.png";
 const iconSrc = rawIcon.match(/^(http|https|\/\/)/) ? rawIcon : url(rawIcon);
+const geminiProxyUrl = import.meta.env.PUBLIC_GEMINI_PROXY_URL || "";
+const aiStudioProxyUrl = import.meta.env.PUBLIC_AISTUDIO_PROXY_URL || "";
 ---
 <div id="navbar" class="z-50 onload-animation group" data-transparent-mode={navbarTransparentMode} data-is-home={isHomePage}>
     <div class="absolute h-8 left-0 right-0 -top-8 bg-[var(--card-bg)] transition"></div> <!-- used for onload animation -->
@@ -98,6 +100,42 @@ const iconSrc = rawIcon.match(/^(http|https|\/\/)/) ? rawIcon : url(rawIcon);
         <DisplaySettings client:only="svelte"></DisplaySettings>
     </div>
 </div>
+
+<dialog id="ai-chat-dialog" class="ai-chat-dialog" data-gemini-proxy-url={geminiProxyUrl} data-aistudio-proxy-url={aiStudioProxyUrl}>
+    <div class="ai-chat-header">
+        <div>
+            <p id="ai-chat-title" class="ai-chat-title">AI Chat</p>
+            <p class="ai-chat-subtitle">通过你的网站代理接口发起请求</p>
+        </div>
+        <button id="ai-chat-close" class="ai-chat-close" aria-label="Close">×</button>
+    </div>
+    <div id="ai-chat-messages" class="ai-chat-messages"></div>
+    <form id="ai-chat-form" class="ai-chat-form">
+        <textarea id="ai-chat-input" class="ai-chat-input" rows="3" placeholder="输入你的问题..."></textarea>
+        <button type="submit" id="ai-chat-submit" class="ai-chat-submit">发送</button>
+    </form>
+</dialog>
+
+<style>
+    .ai-chat-dialog { width: min(92vw, 38rem); border-radius: 1rem; border: 1px solid rgb(0 0 0 / 0.1); background: var(--card-bg); padding: 1rem; }
+    .ai-chat-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.75rem; }
+    .ai-chat-title { font-size:1rem; font-weight:700; color: rgb(0 0 0 / 0.8); }
+    .ai-chat-subtitle { font-size:0.75rem; color: rgb(0 0 0 / 0.5); }
+    .ai-chat-close { width:2rem; height:2rem; border-radius:0.5rem; font-size:1.25rem; line-height:1; background: rgb(0 0 0 / 0.05); }
+    .ai-chat-messages { max-height:45vh; overflow-y:auto; margin-bottom:0.75rem; padding-right:0.25rem; display:flex; flex-direction:column; gap:0.5rem; }
+    .ai-chat-msg { border-radius:0.75rem; padding:0.5rem 0.75rem; font-size:0.875rem; white-space:pre-wrap; }
+    .ai-chat-msg.user { background: rgb(59 130 246 / 0.15); }
+    .ai-chat-msg.assistant { background: rgb(0 0 0 / 0.05); }
+    .ai-chat-form { display:flex; flex-direction:column; gap:0.5rem; }
+    .ai-chat-input { width:100%; border-radius:0.75rem; border:1px solid rgb(0 0 0 / 0.1); background: transparent; padding:0.75rem; font-size:0.875rem; resize:vertical; }
+    .ai-chat-submit { align-self:flex-end; padding:0.5rem 1rem; border-radius:0.75rem; font-size:0.875rem; color:white; background: rgb(59 130 246 / 0.9); }
+    .ai-chat-submit:disabled { opacity:0.6; }
+    .dark .ai-chat-dialog { border-color: rgb(255 255 255 / 0.2); }
+    .dark .ai-chat-title { color: rgb(255 255 255 / 0.9); }
+    .dark .ai-chat-subtitle { color: rgb(255 255 255 / 0.5); }
+    .dark .ai-chat-close, .dark .ai-chat-msg.assistant { background: rgb(255 255 255 / 0.1); }
+    .dark .ai-chat-input { border-color: rgb(255 255 255 / 0.2); }
+</style>
 
 <script>
 	const searchContainer = document.getElementById("search-container");
@@ -189,6 +227,120 @@ async function loadButtonScript() {
 }
 
 loadButtonScript();
+
+const aiChatDialog = document.getElementById("ai-chat-dialog") as HTMLDialogElement | null;
+const aiChatMessages = document.getElementById("ai-chat-messages");
+const aiChatTitle = document.getElementById("ai-chat-title");
+const aiChatForm = document.getElementById("ai-chat-form") as HTMLFormElement | null;
+const aiChatInput = document.getElementById("ai-chat-input") as HTMLTextAreaElement | null;
+const aiChatSubmit = document.getElementById("ai-chat-submit") as HTMLButtonElement | null;
+const aiChatClose = document.getElementById("ai-chat-close");
+
+let currentAiProvider: "gemini" | "aistudio" = "gemini";
+const MAX_MESSAGE_LENGTH = 4000;
+
+function getSafeProxyUrl(rawUrl: string): string {
+    if (!rawUrl) {
+        throw new Error("未配置代理地址，请设置 PUBLIC_GEMINI_PROXY_URL / PUBLIC_AISTUDIO_PROXY_URL");
+    }
+
+    let parsed: URL;
+    try {
+        parsed = new URL(rawUrl, window.location.origin);
+    } catch {
+        throw new Error("代理地址格式不正确");
+    }
+
+    const isHttps = parsed.protocol === "https:";
+    const isLocalhost = ["localhost", "127.0.0.1", "::1"].includes(parsed.hostname);
+    const isHttpLocalDev = parsed.protocol === "http:" && isLocalhost;
+
+    if (!isHttps && !isHttpLocalDev) {
+        throw new Error("代理地址必须为 HTTPS（本地开发可使用 localhost HTTP）");
+    }
+
+    return parsed.toString();
+}
+
+function appendAiMessage(role: "user" | "assistant", content: string) {
+    if (!aiChatMessages) return;
+    const item = document.createElement("div");
+    item.className = `ai-chat-msg ${role}`;
+    item.textContent = content;
+    aiChatMessages.appendChild(item);
+    aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+}
+
+function openAiDialog(provider: "gemini" | "aistudio") {
+    currentAiProvider = provider;
+    if (aiChatTitle) {
+        aiChatTitle.textContent = provider === "gemini" ? "Gemini" : "Mutsumi对话机";
+    }
+    if (aiChatMessages && aiChatMessages.childElementCount === 0) {
+        appendAiMessage("assistant", "你好，我已准备好。消息将先发给你的网站代理接口，再由代理转发到对应模型服务。");
+    }
+    aiChatDialog?.showModal();
+    aiChatInput?.focus();
+}
+
+document.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    const trigger = target.closest("[data-ai-provider]") as HTMLElement | null;
+    if (!trigger) return;
+    event.preventDefault();
+    const provider = trigger.dataset.aiProvider;
+    if (provider === "gemini" || provider === "aistudio") {
+        openAiDialog(provider);
+    }
+});
+
+aiChatClose?.addEventListener("click", () => aiChatDialog?.close());
+aiChatDialog?.addEventListener("click", (event) => {
+    const rect = aiChatDialog.getBoundingClientRect();
+    const isInDialog = rect.top <= event.clientY && event.clientY <= rect.top + rect.height && rect.left <= event.clientX && event.clientX <= rect.left + rect.width;
+    if (!isInDialog) aiChatDialog.close();
+});
+
+aiChatForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!aiChatInput || !aiChatSubmit) return;
+    const message = aiChatInput.value.trim();
+    if (!message) return;
+    if (message.length > MAX_MESSAGE_LENGTH) {
+        appendAiMessage("assistant", `输入过长，请控制在 ${MAX_MESSAGE_LENGTH} 字以内。`);
+        return;
+    }
+
+    appendAiMessage("user", message);
+    aiChatInput.value = "";
+    aiChatSubmit.disabled = true;
+    aiChatSubmit.textContent = "发送中...";
+
+    try {
+        const rawProxyUrl = aiChatDialog?.dataset[currentAiProvider === "gemini" ? "geminiProxyUrl" : "aistudioProxyUrl"] || "";
+        const proxyUrl = getSafeProxyUrl(rawProxyUrl);
+
+        const response = await fetch(proxyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "omit",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify({ message, provider: currentAiProvider }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || "请求失败");
+        }
+        appendAiMessage("assistant", data.reply || "代理未返回内容");
+    } catch (error) {
+        const errMsg = error instanceof Error ? error.message : "请求失败";
+        appendAiMessage("assistant", `请求失败：${errMsg}`);
+    } finally {
+        aiChatSubmit.disabled = false;
+        aiChatSubmit.textContent = "发送";
+    }
+});
+
 
 // 为semifull模式添加滚动检测逻辑
 function initSemifullScrollDetection() {
