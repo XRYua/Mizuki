@@ -1,5 +1,6 @@
 ---
 import Analytics from "@vercel/analytics/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import MusicPlayer from "@components/widget/MusicPlayer.svelte";
 import Pio from "@components/widget/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
@@ -181,6 +182,7 @@ if (siteConfig.font) {
         </script>
 
 		<Analytics />
+		<SpeedInsights />
 		<!-- 第三方分析脚本 - 延迟加载优化 -->
 		<script is:inline>
 			// 使用 requestIdleCallback 延迟加载第三方脚本
@@ -1078,7 +1080,7 @@ function disableAnimation() {
 						"data-transparent-mode",
 					);
 					if (transparentMode === "semifull") {
-						// 重新调用初始化函数来重新绑定滚动事件
+						// 重新调用初始化函数来��新绑定滚动事件
 						if (
 							typeof (window as any)
 								.initSemifullScrollDetection === "function"
@@ -1224,7 +1226,7 @@ function disableAnimation() {
 		setup();
 	} else {
 		document.addEventListener("swup:enable", setup);
-		// 监听 DOM 加载 (确保首屏也能加载优化组件)
+		// 监听 DOM 加载 (确保首屏也能加载优化��件)
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", () => {
 				initFancybox();
