@@ -202,18 +202,27 @@ const yearSuffix = isChinese ? "年" : " ";
 	let selectedDateKey = null;
 	let currentView = "day";
 
+	const calendarRoot = Array.from(document.querySelectorAll("widget-layout"))
+		.filter((widget) => widget.querySelector("#calendar-grid") && !widget.dataset.calendarInitialized)[0];
+
+	if (calendarRoot) {
+		calendarRoot.dataset.calendarInitialized = "true";
+	} else {
+		console.warn("Calendar root element not found.");
+	}
+
 	const dom = {
-		titleContainer: document.getElementById("calendar-title-container"),
-		title: document.getElementById("calendar-title"),
-		prevBtn: document.getElementById("prev-month-btn"),
-		nextBtn: document.getElementById("next-month-btn"),
-		backTodayBtn: document.getElementById("back-to-today-btn"),
-		calendarView: document.getElementById("calendar-view"),
-		selectionPanel: document.getElementById("selection-panel"),
-		selectionContent: document.getElementById("selection-content"),
-		grid: document.getElementById("calendar-grid"),
-		postsList: document.getElementById("calendar-posts-list"),
-		divider: document.getElementById("calendar-posts-divider"),
+		titleContainer: calendarRoot?.querySelector("#calendar-title-container"),
+		title: calendarRoot?.querySelector("#calendar-title"),
+		prevBtn: calendarRoot?.querySelector("#prev-month-btn"),
+		nextBtn: calendarRoot?.querySelector("#next-month-btn"),
+		backTodayBtn: calendarRoot?.querySelector("#back-to-today-btn"),
+		calendarView: calendarRoot?.querySelector("#calendar-view"),
+		selectionPanel: calendarRoot?.querySelector("#selection-panel"),
+		selectionContent: calendarRoot?.querySelector("#selection-content"),
+		grid: calendarRoot?.querySelector("#calendar-grid"),
+		postsList: calendarRoot?.querySelector("#calendar-posts-list"),
+		divider: calendarRoot?.querySelector("#calendar-posts-divider"),
 	};
 
 	function getCurrentPostId() {
@@ -231,6 +240,10 @@ const yearSuffix = isChinese ? "年" : " ";
 	}
 
 	function init() {
+		if (!dom.titleContainer || !dom.title || !dom.prevBtn || !dom.nextBtn || !dom.backTodayBtn || !dom.grid || !dom.selectionContent || !dom.selectionPanel || !dom.postsList || !dom.divider) {
+			console.warn("Calendar DOM elements are incomplete.");
+			return;
+		}
 		renderCalendar();
 		setupEventListeners();
 		fetchCalendarData();
@@ -303,8 +316,7 @@ const yearSuffix = isChinese ? "年" : " ";
 
 		document.addEventListener("click", (e) => {
 			if (currentView === "day") return;
-			const widget = document.getElementById("calendar-widget");
-			if (widget && !widget.contains(e.target)) {
+			if (calendarRoot && !calendarRoot.contains(e.target)) {
 				closeSelectionPanel();
 			}
 		});
