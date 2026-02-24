@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import { readdir } from "node:fs/promises";
+import { readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
@@ -19,8 +19,8 @@ interface Props {
 }
 
 const { class: className, style } = Astro.props;
-
 const siteStartDate = siteConfig.siteStartDate || "2025-01-01";
+
 const posts = await getSortedPosts();
 const categories = await getCategoryList();
 const tags = await getTagList();
@@ -35,8 +35,8 @@ for (const post of posts) {
 			/[\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u3000-\u303f\uff00-\uffef]/g;
 		const cjkMatches = text.match(cjkPattern);
 		const cjkCount = cjkMatches ? cjkMatches.length : 0;
-		const nonCjkText = text.replace(cjkPattern, " ");
-		const nonCjkWords = nonCjkText
+		const nonCjkWords = text
+			.replace(cjkPattern, " ")
 			.split(/\s+/)
 			.filter((word) => word.trim().length > 0);
 		totalWords += cjkCount + nonCjkWords.length;
@@ -61,6 +61,9 @@ const latestEditedPost = postsWithUpdated.reduce(
 	postsWithUpdated[0],
 );
 
+const lastEditedDate = latestEditedPost?.data.updated?.toISOString() || null;
+const lastPostDate = latestPost?.data.published?.toISOString() || null;
+
 const postsBaseDir = path.resolve("src/content/posts");
 
 async function getMarkdownFiles(dir: string): Promise<string[]> {
@@ -76,72 +79,24 @@ async function getMarkdownFiles(dir: string): Promise<string[]> {
 	return files.flat();
 }
 
+let latestChangedEntry: { postId: string; changedAt: Date } | null = null;
 const markdownFiles = await getMarkdownFiles(postsBaseDir);
-let latestChangedPost: (typeof posts)[number] | null = null;
+
 for (const file of markdownFiles) {
+	const fileStats = await stat(file);
 	const relativePath = path.relative(postsBaseDir, file).replace(/\\/g, "/");
 	const postId = relativePath.replace(/\.md$/, "");
-	const post = posts.find((item) => item.id === postId);
-	if (post && (!latestChangedPost || post.data.published > latestChangedPost.data.published)) {
-		latestChangedPost = post;
+	if (!latestChangedEntry || fileStats.mtime > latestChangedEntry.changedAt) {
+		latestChangedEntry = { postId, changedAt: fileStats.mtime };
 	}
 }
 
-function parseRepoFromUrl(repoUrl: string): string | null {
-	const cleanUrl = repoUrl.replace(/\.git$/, "").trim();
-	const match = cleanUrl.match(/github\.com[:/]([^/]+)\/([^/]+)/i);
-	if (!match) return null;
-	return `${match[1]}/${match[2]}`;
-}
-
-const githubRepo =
-	parseRepoFromUrl(process.env.CONTENT_REPO_URL || "") ||
-	parseRepoFromUrl(process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY
-		? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}`
-		: "") ||
-	"matsuzaka-yuki/Mizuki";
-
-async function getGithubLastEditDate(paths: string[]): Promise<string | null> {
-	for (const repoPath of paths) {
-		try {
-			const endpoint = `https://api.github.com/repos/${githubRepo}/commits?path=${encodeURIComponent(repoPath)}&per_page=1`;
-			const response = await fetch(endpoint, {
-				headers: {
-					Accept: "application/vnd.github+json",
-					"User-Agent": "Mizuki-SiteStats",
-				},
-			});
-			if (!response.ok) continue;
-			const data = await response.json();
-			const date = data?.[0]?.commit?.committer?.date;
-			if (date) return date;
-		} catch {
-			continue;
-		}
-	}
-	return null;
-}
-
-function postPathCandidates(postId: string | undefined) {
-	if (!postId) return [];
-	return [
-		`src/content/posts/${postId}.md`,
-		`content/posts/${postId}.md`,
-		`posts/${postId}.md`,
-	];
-}
-
-const lastEditedDate =
-	(await getGithubLastEditDate(postPathCandidates(latestEditedPost?.id))) ||
-	(latestEditedPost?.data.updated?.toISOString() || null);
-
-const lastPostDate =
-	(await getGithubLastEditDate(postPathCandidates(latestPost?.id))) ||
-	(latestPost?.data.published?.toISOString() || null);
-
-const blogLastChangeDate =
-	(await getGithubLastEditDate(["src/content/posts", "content/posts", "posts"])) ||
-	(lastEditedDate || lastPostDate);
+const latestChangedPost = latestChangedEntry
+	? posts.find((post) => post.id === latestChangedEntry.postId)
+	: null;
+const blogLastChangeDate = latestChangedEntry
+	? latestChangedEntry.changedAt.toISOString()
+	: null;
 
 const candidateDates = [lastEditedDate, lastPostDate, blogLastChangeDate]
 	.filter(Boolean)
@@ -167,7 +122,7 @@ const activityItems = [
 	},
 	{
 		label: "博客最后改动内容",
-		title: latestChangedPost?.data.title || "-",
+		title: latestChangedPost?.data.title || latestChangedEntry?.postId || "-",
 		url: latestChangedPost ? getPostUrl(latestChangedPost) : null,
 		date: blogLastChangeDate,
 	},
@@ -218,79 +173,62 @@ const stats = [
 	style={style}
 >
 	<div class="flex flex-col gap-1">
-		{
-			stats.map((stat) => (
-				<div class="px-2 py-2">
-					<div class="flex items-center justify-between">
-						<div class="flex items-center gap-2.5 flex-1 min-w-0">
-							<div class="text-[var(--primary)] text-xl shrink-0">
-								<Icon name={stat.icon} />
-							</div>
-							<span class="text-neutral-700 dark:text-neutral-300 font-medium text-sm break-words leading-tight">
-								{stat.label}
-							</span>
+		{stats.map((stat) => (
+			<div class="px-2 py-2">
+				<div class="flex items-center justify-between">
+					<div class="flex items-center gap-2.5 flex-1 min-w-0">
+						<div class="text-[var(--primary)] text-xl shrink-0">
+							<Icon name={stat.icon} />
 						</div>
-						<div class="flex items-center ml-3 shrink-0">
-							<span
-								class="text-base font-bold text-neutral-900 dark:text-neutral-100"
-								data-stat-id={stat.id}
-							>
-								{stat.formatted ? formatNumber(stat.value) : stat.value}
-							</span>
-							{stat.suffix && (
-								<span class="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
-									{stat.suffix}
-								</span>
-							)}
-						</div>
+						<span class="text-neutral-700 dark:text-neutral-300 font-medium text-sm break-words leading-tight">
+							{stat.label}
+						</span>
 					</div>
-					{stat.id === "last-update" && (
-						<div class="mt-2 ml-8" data-site-stats-dropdown>
-							<button
-								class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-4 w-full text-left hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition"
-								type="button"
-								data-site-stats-dropdown-trigger
-								aria-expanded="false"
-							>
-								<div class="text-xs font-medium text-neutral-600 dark:text-neutral-300">活动来源详情</div>
-								<Icon
-									name="material-symbols:keyboard-arrow-down-rounded"
-									class="transition text-[1.25rem] text-[var(--primary)] site-stats-dropdown-arrow duration-200"
-								/>
-							</button>
-							<div class="site-stats-submenu" data-site-stats-submenu>
-								<div class="mt-1 flex flex-col gap-1.5">
-									{activityItems.map((item) => (
-										<div class="rounded-lg px-2 py-1.5 hover:bg-[var(--btn-plain-bg-hover)] transition">
-											<div class="text-[11px] text-neutral-500 dark:text-neutral-400">{item.label}</div>
-											{item.url ? (
-												<a href={item.url} class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate hover:text-[var(--primary)]">
-													{item.title}
-												</a>
-											) : (
-												<span class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">{item.title}</span>
-											)}
-											<div class="text-[11px] text-neutral-500 dark:text-neutral-400">
-												{item.date ? new Date(item.date).toLocaleDateString("zh-CN") : "-"}
-											</div>
-										</div>
-									))}
+					<div class="flex items-center ml-3 shrink-0">
+						<span
+							class="text-base font-bold text-neutral-900 dark:text-neutral-100"
+							data-stat-id={stat.id}
+						>
+							{stat.formatted ? formatNumber(stat.value) : stat.value}
+						</span>
+						{stat.suffix && (
+							<span class="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
+								{stat.suffix}
+							</span>
+						)}
+					</div>
+				</div>
+				{stat.id === "last-update" && (
+					<div class="mt-2 ml-8 flex flex-col gap-1.5">
+						{activityItems.map((item) => (
+							<div class="rounded-lg px-2 py-1.5 hover:bg-[var(--btn-plain-bg-hover)] transition">
+								<div class="text-[11px] text-neutral-500 dark:text-neutral-400">{item.label}</div>
+								{item.url ? (
+									<a href={item.url} class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate hover:text-[var(--primary)]">
+										{item.title}
+									</a>
+								) : (
+									<span class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">{item.title}</span>
+								)}
+								<div class="text-[11px] text-neutral-500 dark:text-neutral-400">
+									{item.date ? new Date(item.date).toLocaleDateString("zh-CN") : "-"}
 								</div>
 							</div>
-						</div>
-					)}
-				</div>
-			))
-		}
+						))}
+					</div>
+				)}
+			</div>
+		))}
 	</div>
 </WidgetLayout>
 
 <script is:inline define:vars={{ siteStartDate, lastActivityDate }}>
 	function updateDynamicStats() {
 		const now = new Date();
-
 		const startDate = new Date(siteStartDate);
-		const runDays = Math.ceil(Math.abs(now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+		const runDays = Math.ceil(
+			Math.abs(now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+		);
 		document.querySelectorAll('[data-stat-id="running-days"]').forEach((element) => {
 			element.textContent = runDays.toString();
 		});
@@ -312,38 +250,5 @@ const stats = [
 	}
 
 	updateDynamicStats();
-	setInterval(updateDynamicStats, 1000);
-</script>
-
-
-<style>
-	.site-stats-submenu {
-		@apply max-h-0 overflow-hidden transition-all duration-300 ease-in-out;
-	}
-
-	[data-site-stats-dropdown][data-expanded="true"] .site-stats-submenu {
-		@apply max-h-96;
-	}
-
-	[data-site-stats-dropdown][data-expanded="true"] .site-stats-dropdown-arrow {
-		@apply rotate-180;
-	}
-</style>
-
-<script>
-	document.addEventListener("DOMContentLoaded", () => {
-		const dropdowns = document.querySelectorAll("[data-site-stats-dropdown]");
-
-		dropdowns.forEach((dropdown) => {
-			const trigger = dropdown.querySelector("[data-site-stats-dropdown-trigger]");
-			if (!trigger) return;
-
-			trigger.addEventListener("click", () => {
-				const isExpanded = dropdown.getAttribute("data-expanded") === "true";
-				const nextState = (!isExpanded).toString();
-				dropdown.setAttribute("data-expanded", nextState);
-				trigger.setAttribute("aria-expanded", nextState);
-			});
-		});
-	});
+	setInterval(updateDynamicStats, 60 * 60 * 1000);
 </script>
