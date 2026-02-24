@@ -135,10 +135,12 @@ const yearSuffix = isChinese ? "年" : " ";
 		yearSuffix,
 	}}
 >
-	(() => {
-		const currentScript = document.currentScript;
-		const widgetRoot = currentScript?.previousElementSibling;
-		if (!(widgetRoot instanceof HTMLElement)) return;
+	{
+		const calendarWidgets = Array.from(document.querySelectorAll("#calendar-widget"));
+		calendarWidgets.forEach((widgetRoot) => {
+			if (!(widgetRoot instanceof HTMLElement)) return;
+			if (widgetRoot.dataset.calendarInitialized === "true") return;
+			widgetRoot.dataset.calendarInitialized = "true";
 
 	let allPostsData = [];
 	const postDateMap = {};
@@ -499,7 +501,7 @@ const yearSuffix = isChinese ? "年" : " ";
 		dom.selectionContent.innerHTML = html;
 
 		setTimeout(() => {
-			const el = document.getElementById(`year-${currentYear}`);
+			const el = dom.selectionContent.querySelector(`#year-${currentYear}`);
 			if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
 		}, 50);
 	}
@@ -513,8 +515,9 @@ const yearSuffix = isChinese ? "年" : " ";
 		}, 200);
 	}
 
-	init();
-	})();
+			init();
+		});
+	}
 </script>
 
 <style>
