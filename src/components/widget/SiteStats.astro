@@ -1,5 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
+import { readdir, stat } from "node:fs/promises";
+import path from "node:path";
 import { siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
@@ -69,6 +71,89 @@ const latestPost = posts.reduce((latest, post) => {
 const lastPostDate = latestPost
 	? latestPost.data.published.toISOString()
 	: null;
+
+// 获取最近编辑的文章（按 frontmatter updated 字段）
+const postsWithUpdated = posts.filter((post) => post.data.updated);
+const latestEditedPost = postsWithUpdated.reduce(
+	(latest, post) => {
+		if (!latest) return post;
+		return post.data.updated! > latest.data.updated! ? post : latest;
+	},
+	postsWithUpdated[0],
+);
+
+const lastEditedDate = latestEditedPost?.data.updated?.toISOString() || null;
+
+// 获取博客最近文件改动（按 markdown 文件 mtime）
+const postsBaseDir = path.resolve("src/content/posts");
+
+async function getMarkdownFiles(dir: string): Promise<string[]> {
+	const entries = await readdir(dir, { withFileTypes: true });
+	const files = await Promise.all(
+		entries.map(async (entry) => {
+			const fullPath = path.join(dir, entry.name);
+			if (entry.isDirectory()) {
+				return getMarkdownFiles(fullPath);
+			}
+			if (entry.isFile() && fullPath.endsWith(".md")) {
+				return [fullPath];
+			}
+			return [];
+		}),
+	);
+	return files.flat();
+}
+
+let latestChangedEntry: { postId: string; changedAt: Date } | null = null;
+const markdownFiles = await getMarkdownFiles(postsBaseDir);
+
+for (const file of markdownFiles) {
+	const fileStats = await stat(file);
+	const relativePath = path.relative(postsBaseDir, file).replace(/\\/g, "/");
+	const postId = relativePath.replace(/\.md$/, "");
+
+	if (!latestChangedEntry || fileStats.mtime > latestChangedEntry.changedAt) {
+		latestChangedEntry = {
+			postId,
+			changedAt: fileStats.mtime,
+		};
+	}
+}
+
+const latestChangedPost = latestChangedEntry
+	? posts.find((post) => post.id === latestChangedEntry!.postId)
+	: null;
+
+const blogLastChangeDate = latestChangedEntry
+	? latestChangedEntry.changedAt.toISOString()
+	: null;
+
+const candidateDates = [lastEditedDate, lastPostDate, blogLastChangeDate]
+	.filter(Boolean)
+	.map((date) => new Date(date!));
+
+const lastActivityDate =
+	candidateDates.length > 0
+		? new Date(Math.max(...candidateDates.map((d) => d.getTime()))).toISOString()
+		: null;
+
+const activityCatalog = [
+	{
+		label: "最后编辑文章",
+		title: latestEditedPost?.data.title || "-",
+		time: lastEditedDate,
+	},
+	{
+		label: "最后发表文章",
+		title: latestPost?.data.title || "-",
+		time: lastPostDate,
+	},
+	{
+		label: "博客最后改动内容",
+		title: latestChangedPost?.data.title || latestChangedEntry?.postId || "-",
+		time: blogLastChangeDate,
+	},
+];
 
 const stats = [
 	{
@@ -148,9 +233,34 @@ const stats = [
 			))
 		}
 	</div>
+	<div class="mt-2 px-2 pb-2">
+		<details class="text-sm text-neutral-700 dark:text-neutral-300">
+			<summary class="cursor-pointer select-none font-medium">
+				最后活动目录
+			</summary>
+			<ul class="mt-2 space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
+				{activityCatalog.map((item) => (
+					<li>
+						<span class="font-medium">{item.label}：</span>
+						<span>{item.title}</span>
+						<span class="ml-1">
+							(
+							{item.time
+								? new Date(item.time).toLocaleString("zh-CN", {
+									dateStyle: "medium",
+									timeStyle: "short",
+								})
+								: "-"}
+							)
+						</span>
+					</li>
+				))}
+			</ul>
+		</details>
+	</div>
 </WidgetLayout>
 
-<script is:inline define:vars={{ siteStartDate, lastPostDate }}>
+<script is:inline define:vars={{ siteStartDate, lastActivityDate }}>
 	function updateDynamicStats() {
 		const today = new Date();
 
@@ -169,10 +279,10 @@ const stats = [
 		}
 
 		// 更新最后活动时间
-		if (lastPostDate) {
-			const lastPost = new Date(lastPostDate);
+		if (lastActivityDate) {
+			const lastActivity = new Date(lastActivityDate);
 			const timeSinceLastPost = Math.abs(
-				today.getTime() - lastPost.getTime(),
+				today.getTime() - lastActivity.getTime(),
 			);
 			const daysSinceLastUpdate = Math.floor(
 				timeSinceLastPost / (1000 * 60 * 60 * 24),
