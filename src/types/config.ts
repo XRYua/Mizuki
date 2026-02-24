@@ -212,7 +212,8 @@ export type NavBarLink = {
 	name: string;
 	url: string;
 	external?: boolean;
-	icon?: string; // 菜单项图标
+	icon?: string; // 菜单项图标（Iconify 图标名）
+	iconText?: string; // 菜单项文本图标（如单个汉字）
 	children?: (NavBarLink | LinkPreset)[]; // 支持子菜单，可以是NavBarLink或LinkPreset
 };
 

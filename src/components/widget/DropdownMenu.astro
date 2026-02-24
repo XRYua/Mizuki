@@ -38,6 +38,8 @@ const children =
 	) ?? [];
 
 const hasChildren = children.length > 0;
+
+const renderTextIconClass = "inline-flex items-center justify-center min-w-[1.1rem] h-[1.1rem] mr-2 rounded text-[0.75rem] leading-none font-bold bg-[var(--btn-plain-bg-hover)] text-[var(--primary)]";
 ---
 
 <div class:list={["dropdown-container group", className]} data-dropdown>
@@ -50,8 +52,10 @@ const hasChildren = children.length > 0;
 					aria-haspopup="true"
 					data-dropdown-trigger
 				>
-					{link.icon && (
-						<Icon name={link.icon} class="text-[1.1rem] lg:mr-2 flex-shrink-0" />
+					{link.iconText ? (
+						<span class={`${renderTextIconClass} lg:mr-2 flex-shrink-0`}>{link.iconText}</span>
+					) : (
+						link.icon && <Icon name={link.icon} class="text-[1.1rem] lg:mr-2 flex-shrink-0" />
 					)}
 					<span class="truncate hidden lg:inline">{getLocalizedName(link.name)}</span>
 					<Icon
@@ -77,11 +81,15 @@ const hasChildren = children.length > 0;
 								aria-label={child.name}
 							>
 								<div class="flex items-center">
-									{child.icon && (
-										<Icon
-											name={child.icon}
-											class="text-[1rem] mr-2"
-										/>
+									{child.iconText ? (
+										<span class={renderTextIconClass}>{child.iconText}</span>
+									) : (
+										child.icon && (
+											<Icon
+												name={child.icon}
+												class="text-[1rem] mr-2"
+											/>
+										)
 									)}
 									<span>{getLocalizedName(child.name)}</span>
 								</div>
@@ -104,8 +112,10 @@ const hasChildren = children.length > 0;
 				rel={link.external ? "noopener noreferrer" : null}
 				class="btn-plain scale-animation rounded-lg h-11 font-bold w-11 lg:w-auto lg:px-5 active:scale-95 flex items-center justify-center lg:justify-start whitespace-nowrap"
 			>
-				{link.icon && (
-					<Icon name={link.icon} class="text-[1.1rem] lg:mr-2 flex-shrink-0" />
+				{link.iconText ? (
+					<span class={`${renderTextIconClass} lg:mr-2 flex-shrink-0`}>{link.iconText}</span>
+				) : (
+					link.icon && <Icon name={link.icon} class="text-[1.1rem] lg:mr-2 flex-shrink-0" />
 				)}
 				<span class="truncate hidden lg:inline">{getLocalizedName(link.name)}</span>
 				{link.external && (

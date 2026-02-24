@@ -286,6 +286,11 @@ export const navBarConfig: NavBarConfig = {
 					external: true,
 					icon: "mdi:git",
 				},
+				{
+					name: "睦",
+					url: "/mu/",
+					iconText: "睦",
+				},
 			],
 		},
 		{
