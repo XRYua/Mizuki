@@ -269,6 +269,11 @@ export const navBarConfig: NavBarConfig = {
 			icon: "material-symbols:link",
 			children: [
 				{
+					name: "Mutsumi对话机",
+					url: "#mutsumi-chat",
+					icon: "material-symbols:chat",
+				},
+				{
 					name: "GitHub",
 					url: "https://github.com/matsuzaka-yuki/Mizuki",
 					external: true,
@@ -559,9 +564,23 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 
 	// 侧栏组件布局配置
 	components: {
-		left: ["profile", "announcement", "categories", "tags", "calendar", "site-stats"],
+		left: [
+			"profile",
+			"announcement",
+			"categories",
+			"tags",
+			"calendar",
+			"site-stats",
+		],
 		right: [],
-		drawer: ["profile", "announcement", "categories", "tags", "calendar", "site-stats"],
+		drawer: [
+			"profile",
+			"announcement",
+			"categories",
+			"tags",
+			"calendar",
+			"site-stats",
+		],
 	},
 
 	// 默认动画配置

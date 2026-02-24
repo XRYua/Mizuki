@@ -3,6 +3,7 @@ import Analytics from "@vercel/analytics/astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import MusicPlayer from "@components/widget/MusicPlayer.svelte";
+import MutsumiChatDialog from "@components/widget/MutsumiChatDialog.astro";
 import Pio from "@components/widget/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
 import {
 	musicPlayerConfig,
@@ -415,6 +416,7 @@ if (siteConfig.font) {
 
 		<!-- Pio 看板娘组件 - 仅在启用时加载 -->
 		{pioConfig.enable && <Pio client:idle />}
+		<MutsumiChatDialog />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
