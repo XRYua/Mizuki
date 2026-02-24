@@ -135,6 +135,11 @@ const yearSuffix = isChinese ? "年" : " ";
 		yearSuffix,
 	}}
 >
+	(() => {
+		const currentScript = document.currentScript;
+		const widgetRoot = currentScript?.previousElementSibling;
+		if (!(widgetRoot instanceof HTMLElement)) return;
+
 	let allPostsData = [];
 	const postDateMap = {};
 	const postsByMonth = {};
@@ -203,18 +208,20 @@ const yearSuffix = isChinese ? "年" : " ";
 	let currentView = "day";
 
 	const dom = {
-		titleContainer: document.getElementById("calendar-title-container"),
-		title: document.getElementById("calendar-title"),
-		prevBtn: document.getElementById("prev-month-btn"),
-		nextBtn: document.getElementById("next-month-btn"),
-		backTodayBtn: document.getElementById("back-to-today-btn"),
-		calendarView: document.getElementById("calendar-view"),
-		selectionPanel: document.getElementById("selection-panel"),
-		selectionContent: document.getElementById("selection-content"),
-		grid: document.getElementById("calendar-grid"),
-		postsList: document.getElementById("calendar-posts-list"),
-		divider: document.getElementById("calendar-posts-divider"),
+		titleContainer: widgetRoot.querySelector("#calendar-title-container"),
+		title: widgetRoot.querySelector("#calendar-title"),
+		prevBtn: widgetRoot.querySelector("#prev-month-btn"),
+		nextBtn: widgetRoot.querySelector("#next-month-btn"),
+		backTodayBtn: widgetRoot.querySelector("#back-to-today-btn"),
+		calendarView: widgetRoot.querySelector("#calendar-view"),
+		selectionPanel: widgetRoot.querySelector("#selection-panel"),
+		selectionContent: widgetRoot.querySelector("#selection-content"),
+		grid: widgetRoot.querySelector("#calendar-grid"),
+		postsList: widgetRoot.querySelector("#calendar-posts-list"),
+		divider: widgetRoot.querySelector("#calendar-posts-divider"),
 	};
+
+	if (Object.values(dom).some((el) => !el)) return;
 
 	function getCurrentPostId() {
 		const path = window.location.pathname;
@@ -303,8 +310,7 @@ const yearSuffix = isChinese ? "年" : " ";
 
 		document.addEventListener("click", (e) => {
 			if (currentView === "day") return;
-			const widget = document.getElementById("calendar-widget");
-			if (widget && !widget.contains(e.target)) {
+			if (!widgetRoot.contains(e.target)) {
 				closeSelectionPanel();
 			}
 		});
@@ -508,6 +514,7 @@ const yearSuffix = isChinese ? "年" : " ";
 	}
 
 	init();
+	})();
 </script>
 
 <style>
