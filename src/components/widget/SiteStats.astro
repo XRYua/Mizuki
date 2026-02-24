@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import { readdir, stat } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { siteConfig } from "../../config";
 import I18nKey from "../../i18n/i18nKey";
@@ -20,60 +20,38 @@ interface Props {
 
 const { class: className, style } = Astro.props;
 
-// 从配置中获取站点开始日期
 const siteStartDate = siteConfig.siteStartDate || "2025-01-01";
-
-// 获取所有文章
 const posts = await getSortedPosts();
 const categories = await getCategoryList();
 const tags = await getTagList();
 
-// 计算总字数
 let totalWords = 0;
 for (const post of posts) {
 	if (post.body) {
 		let text = post.body;
-
-		// 移除代码块
 		text = text.replace(/```[\s\S]*?```/g, "");
-		// 移除 ` 包裹的行内代码
 		text = text.replace(/`[^`]+`/g, "");
-
-		// 使用与 remark-content.mjs 完全一致的 CJK 正则
 		const cjkPattern =
 			/[\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u3000-\u303f\uff00-\uffef]/g;
-
 		const cjkMatches = text.match(cjkPattern);
 		const cjkCount = cjkMatches ? cjkMatches.length : 0;
-
-		// 计算非 CJK 单词数
 		const nonCjkText = text.replace(cjkPattern, " ");
-
-		// 按空白字符分割，计算单词数量
 		const nonCjkWords = nonCjkText
 			.split(/\s+/)
 			.filter((word) => word.trim().length > 0);
-
 		totalWords += cjkCount + nonCjkWords.length;
 	}
 }
 
-// 格式化数字（添加千位分隔符）
 function formatNumber(num: number): string {
 	return num.toLocaleString();
 }
 
-// 获取最新文章日期（忽略置顶状态，只按发布日期排序）
 const latestPost = posts.reduce((latest, post) => {
 	if (!latest) return post;
 	return post.data.published > latest.data.published ? post : latest;
 }, posts[0]);
 
-const lastPostDate = latestPost
-	? latestPost.data.published.toISOString()
-	: null;
-
-// 获取最近编辑的文章（按 frontmatter updated 字段）
 const postsWithUpdated = posts.filter((post) => post.data.updated);
 const latestEditedPost = postsWithUpdated.reduce(
 	(latest, post) => {
@@ -83,9 +61,6 @@ const latestEditedPost = postsWithUpdated.reduce(
 	postsWithUpdated[0],
 );
 
-const lastEditedDate = latestEditedPost?.data.updated?.toISOString() || null;
-
-// 获取博客最近文件改动（按 markdown 文件 mtime）
 const postsBaseDir = path.resolve("src/content/posts");
 
 async function getMarkdownFiles(dir: string): Promise<string[]> {
@@ -93,41 +68,80 @@ async function getMarkdownFiles(dir: string): Promise<string[]> {
 	const files = await Promise.all(
 		entries.map(async (entry) => {
 			const fullPath = path.join(dir, entry.name);
-			if (entry.isDirectory()) {
-				return getMarkdownFiles(fullPath);
-			}
-			if (entry.isFile() && fullPath.endsWith(".md")) {
-				return [fullPath];
-			}
+			if (entry.isDirectory()) return getMarkdownFiles(fullPath);
+			if (entry.isFile() && fullPath.endsWith(".md")) return [fullPath];
 			return [];
 		}),
 	);
 	return files.flat();
 }
 
-let latestChangedEntry: { postId: string; changedAt: Date } | null = null;
 const markdownFiles = await getMarkdownFiles(postsBaseDir);
-
+let latestChangedPost: (typeof posts)[number] | null = null;
 for (const file of markdownFiles) {
-	const fileStats = await stat(file);
 	const relativePath = path.relative(postsBaseDir, file).replace(/\\/g, "/");
 	const postId = relativePath.replace(/\.md$/, "");
-
-	if (!latestChangedEntry || fileStats.mtime > latestChangedEntry.changedAt) {
-		latestChangedEntry = {
-			postId,
-			changedAt: fileStats.mtime,
-		};
+	const post = posts.find((item) => item.id === postId);
+	if (post && (!latestChangedPost || post.data.published > latestChangedPost.data.published)) {
+		latestChangedPost = post;
 	}
 }
 
-const latestChangedPost = latestChangedEntry
-	? posts.find((post) => post.id === latestChangedEntry!.postId)
-	: null;
+function parseRepoFromUrl(repoUrl: string): string | null {
+	const cleanUrl = repoUrl.replace(/\.git$/, "").trim();
+	const match = cleanUrl.match(/github\.com[:/]([^/]+)\/([^/]+)/i);
+	if (!match) return null;
+	return `${match[1]}/${match[2]}`;
+}
 
-const blogLastChangeDate = latestChangedEntry
-	? latestChangedEntry.changedAt.toISOString()
-	: null;
+const githubRepo =
+	parseRepoFromUrl(process.env.CONTENT_REPO_URL || "") ||
+	parseRepoFromUrl(process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY
+		? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}`
+		: "") ||
+	"matsuzaka-yuki/Mizuki";
+
+async function getGithubLastEditDate(paths: string[]): Promise<string | null> {
+	for (const repoPath of paths) {
+		try {
+			const endpoint = `https://api.github.com/repos/${githubRepo}/commits?path=${encodeURIComponent(repoPath)}&per_page=1`;
+			const response = await fetch(endpoint, {
+				headers: {
+					Accept: "application/vnd.github+json",
+					"User-Agent": "Mizuki-SiteStats",
+				},
+			});
+			if (!response.ok) continue;
+			const data = await response.json();
+			const date = data?.[0]?.commit?.committer?.date;
+			if (date) return date;
+		} catch {
+			continue;
+		}
+	}
+	return null;
+}
+
+function postPathCandidates(postId: string | undefined) {
+	if (!postId) return [];
+	return [
+		`src/content/posts/${postId}.md`,
+		`content/posts/${postId}.md`,
+		`posts/${postId}.md`,
+	];
+}
+
+const lastEditedDate =
+	(await getGithubLastEditDate(postPathCandidates(latestEditedPost?.id))) ||
+	(latestEditedPost?.data.updated?.toISOString() || null);
+
+const lastPostDate =
+	(await getGithubLastEditDate(postPathCandidates(latestPost?.id))) ||
+	(latestPost?.data.published?.toISOString() || null);
+
+const blogLastChangeDate =
+	(await getGithubLastEditDate(["src/content/posts", "content/posts", "posts"])) ||
+	(lastEditedDate || lastPostDate);
 
 const candidateDates = [lastEditedDate, lastPostDate, blogLastChangeDate]
 	.filter(Boolean)
@@ -138,27 +152,24 @@ const lastActivityDate =
 		? new Date(Math.max(...candidateDates.map((d) => d.getTime()))).toISOString()
 		: null;
 
-const activityCatalog = [
+const activityItems = [
 	{
 		label: "最后编辑文章",
-		icon: "material-symbols:edit-note-rounded",
 		title: latestEditedPost?.data.title || "-",
 		url: latestEditedPost ? getPostUrl(latestEditedPost) : null,
-		time: lastEditedDate,
+		date: lastEditedDate,
 	},
 	{
 		label: "最后发表文章",
-		icon: "material-symbols:publish-rounded",
 		title: latestPost?.data.title || "-",
 		url: latestPost ? getPostUrl(latestPost) : null,
-		time: lastPostDate,
+		date: lastPostDate,
 	},
 	{
 		label: "博客最后改动内容",
-		icon: "material-symbols:history-rounded",
-		title: latestChangedPost?.data.title || latestChangedEntry?.postId || "-",
+		title: latestChangedPost?.data.title || "-",
 		url: latestChangedPost ? getPostUrl(latestChangedPost) : null,
-		time: blogLastChangeDate,
+		date: blogLastChangeDate,
 	},
 ];
 
@@ -187,16 +198,14 @@ const stats = [
 	{
 		icon: "material-symbols:calendar-clock-outline",
 		label: i18n(I18nKey.siteStatsRunningDays),
-		value: 0, // 将由客户端更新
+		value: 0,
 		suffix: i18n(I18nKey.siteStatsDays).replace("{days}", ""),
-		dynamic: true,
 		id: "running-days",
 	},
 	{
 		icon: "material-symbols:ecg-heart-outline",
 		label: i18n(I18nKey.siteStatsLastUpdate),
-		value: 0, // 将由客户端更新
-		dynamic: true,
+		value: 0,
 		id: "last-update",
 	},
 ];
@@ -211,116 +220,81 @@ const stats = [
 	<div class="flex flex-col gap-1">
 		{
 			stats.map((stat) => (
-				<div class="flex items-center justify-between px-2 py-2">
-					<div class="flex items-center gap-2.5 flex-1 min-w-0">
-						<div class="text-[var(--primary)] text-xl shrink-0">
-							<Icon name={stat.icon} />
-						</div>
-						<span class="text-neutral-700 dark:text-neutral-300 font-medium text-sm break-words leading-tight">
-							{stat.label}
-						</span>
-					</div>
-					<div class="flex items-center ml-3 shrink-0">
-						<span
-							class="text-base font-bold text-neutral-900 dark:text-neutral-100"
-							data-stat-id={stat.id}
-						>
-							{stat.formatted
-								? formatNumber(stat.value)
-								: stat.value}
-						</span>
-						{stat.suffix && (
-							<span class="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
-								{stat.suffix}
+				<div class="px-2 py-2">
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-2.5 flex-1 min-w-0">
+							<div class="text-[var(--primary)] text-xl shrink-0">
+								<Icon name={stat.icon} />
+							</div>
+							<span class="text-neutral-700 dark:text-neutral-300 font-medium text-sm break-words leading-tight">
+								{stat.label}
 							</span>
-						)}
+						</div>
+						<div class="flex items-center ml-3 shrink-0">
+							<span
+								class="text-base font-bold text-neutral-900 dark:text-neutral-100"
+								data-stat-id={stat.id}
+							>
+								{stat.formatted ? formatNumber(stat.value) : stat.value}
+							</span>
+							{stat.suffix && (
+								<span class="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
+									{stat.suffix}
+								</span>
+							)}
+						</div>
 					</div>
-				</div>
-			))
-		}
-	</div>
-	<div class="mt-2 px-2 pb-2 border-t border-black/5 dark:border-white/10">
-		<details class="group">
-			<summary class="list-none cursor-pointer select-none flex items-center justify-between py-2 rounded-lg px-2 transition hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]">
-				<span class="font-medium text-sm text-neutral-800 dark:text-neutral-200">最后活动目录</span>
-				<Icon name="material-symbols:keyboard-arrow-down-rounded" class="text-xl text-[var(--primary)] transition-transform group-open:rotate-180" />
-			</summary>
-			<ul class="mt-1 space-y-1">
-				{activityCatalog.map((item) => (
-					<li>
-						<div class="group flex items-center justify-between py-2 pl-3 pr-2 rounded-lg gap-3 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition">
-							<div class="flex items-center min-w-0 gap-2">
-								<Icon name={item.icon} class="text-[1.05rem] text-[var(--primary)] shrink-0" />
-								<div class="min-w-0">
+					{stat.id === "last-update" && (
+						<div class="mt-2 ml-8 flex flex-col gap-1.5">
+							{activityItems.map((item) => (
+								<div class="rounded-lg px-2 py-1.5 hover:bg-[var(--btn-plain-bg-hover)] transition">
 									<div class="text-[11px] text-neutral-500 dark:text-neutral-400">{item.label}</div>
 									{item.url ? (
-										<a href={item.url} class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate hover:text-[var(--primary)] transition">{item.title}</a>
+										<a href={item.url} class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate hover:text-[var(--primary)]">
+											{item.title}
+										</a>
 									) : (
 										<span class="block text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">{item.title}</span>
 									)}
+									<div class="text-[11px] text-neutral-500 dark:text-neutral-400">
+										{item.date ? new Date(item.date).toLocaleDateString("zh-CN") : "-"}
+									</div>
 								</div>
-							</div>
-							<div class="text-[11px] text-right text-neutral-500 dark:text-neutral-400 shrink-0">
-								{item.time
-									? new Date(item.time).toLocaleString("zh-CN", {
-										dateStyle: "short",
-										timeStyle: "medium",
-									})
-									: "-"}
-							</div>
+							))}
 						</div>
-					</li>
-				))}
-			</ul>
-		</details>
+					)}
+				</div>
+			))
+		}
 	</div>
 </WidgetLayout>
 
 <script is:inline define:vars={{ siteStartDate, lastActivityDate }}>
 	function updateDynamicStats() {
-		const today = new Date();
+		const now = new Date();
 
-		// 更新运行天数
 		const startDate = new Date(siteStartDate);
-		const diffTime = Math.abs(today.getTime() - startDate.getTime());
-		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+		const runDays = Math.ceil(Math.abs(now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+		document.querySelectorAll('[data-stat-id="running-days"]').forEach((element) => {
+			element.textContent = runDays.toString();
+		});
 
-		const runningDaysElements = document.querySelectorAll(
-			'[data-stat-id="running-days"]',
-		);
-		if (runningDaysElements.length > 0) {
-			runningDaysElements.forEach(element => {
-				element.textContent = diffDays.toString();
-			});
-		}
+		if (!lastActivityDate) return;
+		const elapsedMs = Math.abs(now.getTime() - new Date(lastActivityDate).getTime());
+		const days = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
 
-		// 更新最后活动时间
-		if (lastActivityDate) {
-			const lastActivity = new Date(lastActivityDate);
-			const elapsedMs = Math.abs(today.getTime() - lastActivity.getTime());
-			const days = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
-
-			const lastUpdateElements = document.querySelectorAll(
-				'[data-stat-id="last-update"]',
-			);
-			if (lastUpdateElements.length > 0) {
-				lastUpdateElements.forEach((element) => {
-					if (days < 16) {
-						const hours = Math.floor((elapsedMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-						const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
-						const seconds = Math.floor((elapsedMs % (1000 * 60)) / 1000);
-						element.textContent = `${days}天 ${hours}时 ${minutes}分 ${seconds}秒`;
-					} else {
-						element.textContent = `${days} 天前`;
-					}
-				});
+		document.querySelectorAll('[data-stat-id="last-update"]').forEach((element) => {
+			if (days < 16) {
+				const hours = Math.floor((elapsedMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
+				const seconds = Math.floor((elapsedMs % (1000 * 60)) / 1000);
+				element.textContent = `${days}天 ${hours}时 ${minutes}分 ${seconds}秒`;
+			} else {
+				element.textContent = `${days} 天前`;
 			}
-		}
+		});
 	}
 
-	// 页面加载时更新
 	updateDynamicStats();
-
-	// 每小时更新一次（可选，因为天数变化较慢）
 	setInterval(updateDynamicStats, 1000);
 </script>
