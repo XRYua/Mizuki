@@ -196,3 +196,25 @@
 :root:not(.dark) .custom-md spoiler {
   --_spoiler-mask: color-mix(in oklch, var(--primary) 55%, white 45%);
 }
+
+:root.dark .custom-md {
+  color: rgb(255 255 255 / 0.9);
+
+  :is(p, li, blockquote, figcaption) {
+    color: rgb(255 255 255 / 0.86);
+  }
+
+  :is(h1, h2, h3, h4, h5, h6, strong, th) {
+    color: rgb(255 255 255 / 0.96);
+  }
+
+  a:not(.no-styling) {
+    color: color-mix(in oklch, var(--primary) 78%, white 22%);
+  }
+
+  blockquote {
+    background: rgb(255 255 255 / 0.02);
+    border-radius: var(--radius-large);
+    padding: 0.1rem 0.9rem;
+  }
+}
