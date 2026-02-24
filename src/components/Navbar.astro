@@ -237,6 +237,30 @@ const aiChatSubmit = document.getElementById("ai-chat-submit") as HTMLButtonElem
 const aiChatClose = document.getElementById("ai-chat-close");
 
 let currentAiProvider: "gemini" | "aistudio" = "gemini";
+const MAX_MESSAGE_LENGTH = 4000;
+
+function getSafeProxyUrl(rawUrl: string): string {
+    if (!rawUrl) {
+        throw new Error("未配置代理地址，请设置 PUBLIC_GEMINI_PROXY_URL / PUBLIC_AISTUDIO_PROXY_URL");
+    }
+
+    let parsed: URL;
+    try {
+        parsed = new URL(rawUrl, window.location.origin);
+    } catch {
+        throw new Error("代理地址格式不正确");
+    }
+
+    const isHttps = parsed.protocol === "https:";
+    const isLocalhost = ["localhost", "127.0.0.1", "::1"].includes(parsed.hostname);
+    const isHttpLocalDev = parsed.protocol === "http:" && isLocalhost;
+
+    if (!isHttps && !isHttpLocalDev) {
+        throw new Error("代理地址必须为 HTTPS（本地开发可使用 localhost HTTP）");
+    }
+
+    return parsed.toString();
+}
 
 function appendAiMessage(role: "user" | "assistant", content: string) {
     if (!aiChatMessages) return;
@@ -282,6 +306,10 @@ aiChatForm?.addEventListener("submit", async (event) => {
     if (!aiChatInput || !aiChatSubmit) return;
     const message = aiChatInput.value.trim();
     if (!message) return;
+    if (message.length > MAX_MESSAGE_LENGTH) {
+        appendAiMessage("assistant", `输入过长，请控制在 ${MAX_MESSAGE_LENGTH} 字以内。`);
+        return;
+    }
 
     appendAiMessage("user", message);
     aiChatInput.value = "";
@@ -289,13 +317,14 @@ aiChatForm?.addEventListener("submit", async (event) => {
     aiChatSubmit.textContent = "发送中...";
 
     try {
-        const proxyUrl = aiChatDialog?.dataset[currentAiProvider === "gemini" ? "geminiProxyUrl" : "aistudioProxyUrl"] || "";
-        if (!proxyUrl) {
-            throw new Error("未配置代理地址，请设置 PUBLIC_GEMINI_PROXY_URL / PUBLIC_AISTUDIO_PROXY_URL");
-        }
+        const rawProxyUrl = aiChatDialog?.dataset[currentAiProvider === "gemini" ? "geminiProxyUrl" : "aistudioProxyUrl"] || "";
+        const proxyUrl = getSafeProxyUrl(rawProxyUrl);
+
         const response = await fetch(proxyUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "omit",
+            referrerPolicy: "no-referrer",
             body: JSON.stringify({ message, provider: currentAiProvider }),
         });
         const data = await response.json();
