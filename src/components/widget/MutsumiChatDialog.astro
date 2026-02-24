@@ -1,3 +1,7 @@
+---
+const defaultAppUrl = import.meta.env.PUBLIC_MUTSUMI_GOOGLE_AI_APP_URL || "";
+---
+
 <div
 	id="mutsumi-chat-modal"
 	class="mutsumi-chat-modal hidden"
@@ -5,25 +9,27 @@
 	aria-modal="true"
 	aria-labelledby="mutsumi-chat-title"
 >
-	<div class="mutsumi-chat-backdrop" data-mutsumi-close></div>
+	<button class="mutsumi-chat-backdrop" data-mutsumi-close aria-label="关闭弹窗"></button>
 	<section class="mutsumi-chat-panel">
 		<header class="mutsumi-chat-header">
 			<div>
 				<h2 id="mutsumi-chat-title">Mutsumi对话机</h2>
-				<p>接入 Google AI Studio（Gemini API）</p>
+				<p>使用你指定的 Google AI 应用链接对话</p>
 			</div>
 			<button type="button" class="mutsumi-icon-btn" data-mutsumi-close aria-label="关闭">✕</button>
 		</header>
 
 		<div class="mutsumi-chat-settings">
 			<label>
-				API Key
-				<input id="mutsumi-api-key" type="password" placeholder="粘贴你的 Google AI Studio API Key" />
+				Google AI 应用链接
+				<input
+					id="mutsumi-app-url"
+					type="url"
+					placeholder="例如：https://your-google-ai-app.example.com/chat"
+					value={defaultAppUrl}
+				/>
 			</label>
-			<label>
-				模型
-				<input id="mutsumi-model" type="text" value="gemini-2.5-flash" />
-			</label>
+			<p class="mutsumi-tip">可在 .env 中设置 <code>PUBLIC_MUTSUMI_GOOGLE_AI_APP_URL</code> 作为默认值。</p>
 		</div>
 
 		<main id="mutsumi-chat-messages" class="mutsumi-chat-messages"></main>
@@ -44,163 +50,61 @@
 		align-items: center;
 		justify-content: center;
 	}
-
-	.mutsumi-chat-backdrop {
-		position: absolute;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.45);
-		backdrop-filter: blur(3px);
-	}
-
+	.mutsumi-chat-backdrop { position: absolute; inset: 0; border: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); }
 	.mutsumi-chat-panel {
 		position: relative;
 		z-index: 1;
-		width: min(92vw, 620px);
-		height: min(88vh, 760px);
-		background: var(--card-bg, #fff);
-		border: 1px solid rgba(255, 255, 255, 0.12);
-		border-radius: 18px;
+		width: min(94vw, 680px);
+		height: min(88vh, 780px);
+		background: color-mix(in srgb, var(--float-panel-bg, #fff) 88%, rgba(255, 255, 255, 0.2));
+		border: 1px solid rgba(255, 255, 255, 0.24);
+		border-radius: 20px;
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.24);
 	}
-
-	.mutsumi-chat-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 14px 16px;
-		border-bottom: 1px solid rgba(127, 127, 127, 0.18);
-	}
-
-	.mutsumi-chat-header h2 {
-		margin: 0;
-		font-size: 1.05rem;
-		font-weight: 700;
-	}
-
-	.mutsumi-chat-header p {
-		margin: 2px 0 0;
-		font-size: 0.8rem;
-		opacity: 0.72;
-	}
-
-	.mutsumi-icon-btn {
-		border: none;
-		background: transparent;
-		font-size: 1rem;
-		cursor: pointer;
-		opacity: 0.75;
-	}
-
-	.mutsumi-chat-settings {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 8px;
-		padding: 12px 16px;
-		border-bottom: 1px solid rgba(127, 127, 127, 0.18);
-	}
-
-	.mutsumi-chat-settings label {
-		font-size: 0.78rem;
-		opacity: 0.82;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.mutsumi-chat-settings input {
-		height: 36px;
-		padding: 0 10px;
-		border-radius: 10px;
-		border: 1px solid rgba(127, 127, 127, 0.3);
-		background: transparent;
-	}
-
-	.mutsumi-chat-messages {
-		flex: 1;
-		overflow-y: auto;
-		padding: 14px 16px;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.mutsumi-msg {
-		padding: 10px 12px;
-		border-radius: 12px;
-		max-width: 88%;
-		line-height: 1.5;
-		white-space: pre-wrap;
-	}
-
-	.mutsumi-msg.user {
-		margin-left: auto;
-		background: color-mix(in srgb, var(--primary) 18%, transparent);
-	}
-
-	.mutsumi-msg.assistant {
-		background: color-mix(in srgb, #888 18%, transparent);
-	}
-
-	.mutsumi-chat-form {
-		display: flex;
-		gap: 8px;
-		padding: 12px;
-		border-top: 1px solid rgba(127, 127, 127, 0.18);
-	}
-
-	.mutsumi-chat-form input {
-		flex: 1;
-		height: 40px;
-		padding: 0 12px;
-		border-radius: 10px;
-		border: 1px solid rgba(127, 127, 127, 0.3);
-		background: transparent;
-	}
-
-	.mutsumi-chat-form button {
-		height: 40px;
-		padding: 0 16px;
-		border-radius: 10px;
-		border: none;
-		background: var(--primary);
-		color: white;
-		cursor: pointer;
-	}
-
-	.hidden {
-		display: none !important;
-	}
+	.mutsumi-chat-header,
+	.mutsumi-chat-settings,
+	.mutsumi-chat-form { padding: 12px 14px; }
+	.mutsumi-chat-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(127, 127, 127, 0.2); }
+	.mutsumi-chat-header h2 { margin: 0; font-size: 1.08rem; }
+	.mutsumi-chat-header p { margin: 4px 0 0; opacity: 0.7; font-size: 0.82rem; }
+	.mutsumi-icon-btn { border: none; background: transparent; width: 34px; height: 34px; border-radius: 999px; cursor: pointer; }
+	.mutsumi-icon-btn:hover { background: rgba(127, 127, 127, 0.15); }
+	.mutsumi-chat-settings { border-bottom: 1px solid rgba(127, 127, 127, 0.2); }
+	.mutsumi-chat-settings label { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; opacity: 0.85; }
+	.mutsumi-chat-settings input,
+	.mutsumi-chat-form input { height: 40px; border-radius: 10px; border: 1px solid rgba(127, 127, 127, 0.3); background: transparent; padding: 0 12px; }
+	.mutsumi-tip { margin: 8px 0 0; font-size: 0.74rem; opacity: 0.72; }
+	.mutsumi-chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+	.mutsumi-msg { padding: 10px 12px; border-radius: 12px; max-width: 88%; line-height: 1.55; white-space: pre-wrap; }
+	.mutsumi-msg.user { margin-left: auto; background: color-mix(in srgb, var(--primary) 18%, transparent); }
+	.mutsumi-msg.assistant { background: color-mix(in srgb, #888 16%, transparent); }
+	.mutsumi-chat-form { display: flex; gap: 8px; border-top: 1px solid rgba(127, 127, 127, 0.2); }
+	.mutsumi-chat-form button { height: 40px; padding: 0 16px; border-radius: 10px; border: none; background: var(--primary); color: #fff; cursor: pointer; }
+	.hidden { display: none !important; }
 </style>
 
-<script>
-	const CHAT_LINK = "#mutsumi-chat";
-
-	type Role = "user" | "assistant";
-	type Message = { role: Role; text: string };
+<script define:vars={{ defaultAppUrl }}>
+	const CHAT_HASH = "#mutsumi-chat";
 
 	const initMutsumiDialog = () => {
 		const modal = document.getElementById("mutsumi-chat-modal");
-		if (!modal || (window as any).__mutsumiDialogReady) return;
-		(window as any).__mutsumiDialogReady = true;
+		if (!modal || window.__mutsumiDialogReady) return;
+		window.__mutsumiDialogReady = true;
 
 		const msgContainer = document.getElementById("mutsumi-chat-messages");
-		const form = document.getElementById("mutsumi-chat-form") as HTMLFormElement | null;
-		const input = document.getElementById("mutsumi-chat-input") as HTMLInputElement | null;
-		const keyInput = document.getElementById("mutsumi-api-key") as HTMLInputElement | null;
-		const modelInput = document.getElementById("mutsumi-model") as HTMLInputElement | null;
+		const form = document.getElementById("mutsumi-chat-form");
+		const input = document.getElementById("mutsumi-chat-input");
+		const appUrlInput = document.getElementById("mutsumi-app-url");
+		if (!msgContainer || !form || !input || !appUrlInput) return;
 
-		if (!msgContainer || !form || !input || !keyInput || !modelInput) return;
+		const history = [];
+		const appStorageKey = "mutsumi-google-ai-app-url";
+		appUrlInput.value = localStorage.getItem(appStorageKey) || defaultAppUrl || "";
 
-		const history: Message[] = [];
-		const storageKey = "mutsumi-ai-studio-key";
-		const modelStorageKey = "mutsumi-ai-studio-model";
-
-		keyInput.value = localStorage.getItem(storageKey) || "";
-		modelInput.value = localStorage.getItem(modelStorageKey) || modelInput.value;
-
-		const appendMessage = (role: Role, text: string) => {
+		const appendMessage = (role, text) => {
 			history.push({ role, text });
 			const node = document.createElement("div");
 			node.className = `mutsumi-msg ${role}`;
@@ -211,94 +115,81 @@
 
 		const openModal = () => {
 			modal.classList.remove("hidden");
-			input.focus();
 			if (!history.length) {
-				appendMessage("assistant", "你好，我是 Mutsumi 对话机。先填入你的 Google AI Studio API Key，然后就可以开始对话。\n⚠️ API Key 会保存在你当前浏览器 LocalStorage。");
+				appendMessage("assistant", "你好，我是 Mutsumi 对话机。请先填入你自己的 Google AI 应用链接，然后开始聊天。\n链接会保存在当前浏览器。 ");
+			}
+			input.focus();
+		};
+		const closeModal = () => modal.classList.add("hidden");
+
+		const isChatTrigger = (el) => {
+			const link = el.closest("a");
+			if (!link) return false;
+			const rawHref = link.getAttribute("href") || "";
+			try {
+				return new URL(rawHref, window.location.href).hash === CHAT_HASH;
+			} catch {
+				return rawHref.includes(CHAT_HASH);
 			}
 		};
 
-		const closeModal = () => modal.classList.add("hidden");
-
 		document.addEventListener("click", (event) => {
-			const target = event.target as HTMLElement;
-			const link = target.closest(`a[href='${CHAT_LINK}']`) as HTMLAnchorElement | null;
-			if (link) {
+			const target = event.target;
+			if (target instanceof Element && isChatTrigger(target)) {
 				event.preventDefault();
 				openModal();
-				return;
 			}
-			if (target.closest("[data-mutsumi-close]")) {
+			if (target instanceof Element && target.closest("[data-mutsumi-close]")) {
 				event.preventDefault();
 				closeModal();
 			}
+		});
+
+		window.addEventListener("hashchange", () => {
+			if (window.location.hash === CHAT_HASH) openModal();
 		});
 
 		document.addEventListener("keydown", (event) => {
-			if (event.key === "Escape" && !modal.classList.contains("hidden")) {
-				closeModal();
-			}
+			if (event.key === "Escape" && !modal.classList.contains("hidden")) closeModal();
 		});
 
-		const buildGeminiContents = () =>
-			history.map((msg) => ({
-				role: msg.role === "assistant" ? "model" : "user",
-				parts: [{ text: msg.text }],
-			}));
-
-		const askGemini = async (apiKey: string, model: string) => {
-			const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-			const res = await fetch(endpoint, {
+		const askByAppUrl = async (appUrl) => {
+			const res = await fetch(appUrl, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					contents: buildGeminiContents(),
-					generationConfig: { temperature: 0.85, topP: 0.95 },
+					message: history.at(-1)?.text || "",
+					history,
+					source: "mutsumi-chat-dialog",
 				}),
 			});
-			if (!res.ok) {
-				const errText = await res.text();
-				throw new Error(errText || `HTTP ${res.status}`);
-			}
+			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			const data = await res.json();
-			return (
-				data?.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text || "").join("\n") ||
-				"（未获取到有效回复）"
-			);
+			return data.reply || data.text || data.message || data.output || "（应用未返回可识别字段：reply/text/message/output）";
 		};
 
 		form.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			const question = input.value.trim();
-			const apiKey = keyInput.value.trim();
-			const model = modelInput.value.trim() || "gemini-2.5-flash";
-
+			const appUrl = appUrlInput.value.trim();
 			if (!question) return;
-			if (!apiKey) {
-				appendMessage("assistant", "请先输入 Google AI Studio API Key。");
-				return;
-			}
+			if (!appUrl) return appendMessage("assistant", "请先输入你的 Google AI 应用链接。");
 
-			localStorage.setItem(storageKey, apiKey);
-			localStorage.setItem(modelStorageKey, model);
-
+			localStorage.setItem(appStorageKey, appUrl);
 			appendMessage("user", question);
 			input.value = "";
-			appendMessage("assistant", "正在思考中...");
+			appendMessage("assistant", "正在连接你的应用...");
 
 			try {
-				const text = await askGemini(apiKey, model);
-				const loadingNode = msgContainer.lastElementChild;
-				if (loadingNode?.classList.contains("assistant")) {
-					loadingNode.textContent = text;
-				}
+				const text = await askByAppUrl(appUrl);
+				msgContainer.lastElementChild.textContent = text;
 			} catch (error) {
-				const loadingNode = msgContainer.lastElementChild;
 				const errMsg = error instanceof Error ? error.message : "未知错误";
-				if (loadingNode?.classList.contains("assistant")) {
-					loadingNode.textContent = `调用失败：${errMsg}`;
-				}
+				msgContainer.lastElementChild.textContent = `调用失败：${errMsg}`;
 			}
 		});
+
+		if (window.location.hash === CHAT_HASH) openModal();
 	};
 
 	document.addEventListener("astro:page-load", initMutsumiDialog);
