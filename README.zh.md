@@ -156,7 +156,7 @@
 部署前，请在 `src/config.ts` 中更新 `siteURL`。
 **不建议**将 `.env` 文件提交到 Git，`.env` 应该仅在本地调试或构建使用。若要将项目在云平台部署，建议通过平台上的 `环境变量` 配置传入。
 
-### AI 对话代理配置（Gemini / Google AI Studio）
+### AI 对话代理配置（Gemini / Mutsumi对话机）
 
 本项目导航栏中的 AI 对话入口通过你自己的网站代理接口请求，不直连官方服务。
 
@@ -164,12 +164,12 @@
 
 ```bash
 PUBLIC_GEMINI_PROXY_URL=https://your-domain.com/api/ai/gemini
-PUBLIC_AISTUDIO_PROXY_URL=https://your-domain.com/api/ai/aistudio
+PUBLIC_AISTUDIO_PROXY_URL=https://your-domain.com/api/ai/mutsumi
 ```
 
 2. **API Key 放置位置（重点）**：
 
-- `Gemini API Key`、`AI Studio Key` 只能放在你的**后端代理服务**环境变量中。
+- `Gemini API Key`、`Mutsumi 对应的 Google AI 应用 Key` 只能放在你的**后端代理服务**环境变量中。
 - 不要放在 `PUBLIC_*` 变量、`src/config.ts`、前端代码或仓库里。
 
 3. 代理服务最小安全要求：

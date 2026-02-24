@@ -274,7 +274,7 @@ function appendAiMessage(role: "user" | "assistant", content: string) {
 function openAiDialog(provider: "gemini" | "aistudio") {
     currentAiProvider = provider;
     if (aiChatTitle) {
-        aiChatTitle.textContent = provider === "gemini" ? "Gemini" : "Google AI Studio";
+        aiChatTitle.textContent = provider === "gemini" ? "Gemini" : "Mutsumi对话机";
     }
     if (aiChatMessages && aiChatMessages.childElementCount === 0) {
         appendAiMessage("assistant", "你好，我已准备好。消息将先发给你的网站代理接口，再由代理转发到对应模型服务。");

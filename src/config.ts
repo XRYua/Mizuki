@@ -293,7 +293,7 @@ export const navBarConfig: NavBarConfig = {
 					aiProvider: "gemini",
 				},
 				{
-					name: "Google AI Studio",
+					name: "Mutsumi对话机",
 					url: "#",
 					icon: "simple-icons:google",
 					aiProvider: "aistudio",
