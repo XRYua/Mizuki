@@ -213,6 +213,7 @@ export type NavBarLink = {
 	url: string;
 	external?: boolean;
 	icon?: string; // 菜单项图标
+	aiProvider?: "gemini" | "aistudio";
 	children?: (NavBarLink | LinkPreset)[]; // 支持子菜单，可以是NavBarLink或LinkPreset
 };
 

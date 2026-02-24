@@ -286,6 +286,18 @@ export const navBarConfig: NavBarConfig = {
 					external: true,
 					icon: "mdi:git",
 				},
+				{
+					name: "Gemini",
+					url: "#",
+					icon: "simple-icons:googlegemini",
+					aiProvider: "gemini",
+				},
+				{
+					name: "Google AI Studio",
+					url: "#",
+					icon: "simple-icons:google",
+					aiProvider: "aistudio",
+				},
 			],
 		},
 		{

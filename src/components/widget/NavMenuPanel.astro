@@ -80,6 +80,7 @@ const processedLinks: ProcessedNavBarLink[] = Astro.props.links.map(
                                class="group flex justify-between items-center py-2 pl-6 pr-1 rounded-lg gap-4
                                    hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition"
                                target={child.external ? "_blank" : null}
+                               data-ai-provider={child.aiProvider || undefined}
                             >
                                 <div class="flex items-center transition text-black/60 dark:text-white/60 font-medium">
                                     {child.icon && <Icon name={child.icon} class="text-[1.1rem] mr-2" />}
@@ -98,6 +99,7 @@ const processedLinks: ProcessedNavBarLink[] = Astro.props.links.map(
                     hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition
                 "
                    target={link.external ? "_blank" : null}
+                   data-ai-provider={link.aiProvider || undefined}
                 >
                     <div class="flex items-center transition text-black/75 dark:text-white/75 font-bold">
                         {link.icon && <Icon name={link.icon} class="text-[1.1rem] mr-2" />}
