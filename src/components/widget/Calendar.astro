@@ -434,8 +434,10 @@ const yearSuffix = isChinese ? "年" : " ";
 						" text-neutral-400 group-hover:text-[var(--primary)]/70";
 				}
 
+				const postUrl = post.url || `/posts/${post.id}/`;
+
 				return `
-            <a href="/posts/${post.id}/" class="${containerClass}">
+            <a href="${postUrl}" class="${containerClass}">
                 <span class="${titleClass}">${post.title}</span>
                 <span class="${dateClass}">${dateStr}</span>
             </a>

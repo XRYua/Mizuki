@@ -1,4 +1,5 @@
 import { getSortedPosts } from "../../utils/content-utils";
+import { getPostUrl } from "../../utils/url-utils";
 
 export async function GET() {
 	const posts = await getSortedPosts();
@@ -13,6 +14,7 @@ export async function GET() {
 			id: post.id,
 			title: post.data.title,
 			date: `${year}-${month}-${day}`,
+			url: getPostUrl(post),
 		};
 	});
 
