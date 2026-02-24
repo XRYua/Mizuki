@@ -290,6 +290,7 @@ export const navBarConfig: NavBarConfig = {
 					name: "睦",
 					url: "https://ai.studio/apps/67094d09-2f8b-46e3-abce-e70bb0fc9c83?fullscreenApplet=true",
 					external: true,
+					iconText: "睦",
 				},
 			],
 		},
