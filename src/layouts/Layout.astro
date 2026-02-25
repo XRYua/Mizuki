@@ -106,9 +106,14 @@ if (title) {
 		: siteConfig.title;
 }
 
+const toAbsoluteUrl = (value: string): string =>
+	new URL(value, Astro.site ?? Astro.url).toString();
+
 let ogImageUrl: string | undefined;
 if (siteConfig.generateOgImages && postSlug) {
-	ogImageUrl = new URL(`/og/${postSlug}.png`, Astro.site).toString();
+	ogImageUrl = toAbsoluteUrl(`/og/${postSlug}.png`);
+} else if (banner) {
+	ogImageUrl = toAbsoluteUrl(banner);
 }
 
 const favicons: Favicon[] =
@@ -239,10 +244,12 @@ if (siteConfig.font) {
 		}
 		<meta name="author" content={profileConfig.name} />
 		<meta property="og:site_name" content={siteConfig.title} />
+		<meta property="og:locale" content={siteLang.replace("-", "_")} />
 		<meta property="og:url" content={Astro.url} />
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={description || pageTitle} />
 		{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+		{ogImageUrl && <meta property="twitter:image" content={ogImageUrl} />}
 		{
 			setOGTypeArticle ? (
 				<meta property="og:type" content="article" />
