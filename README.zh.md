@@ -222,6 +222,7 @@ Mizuki 支持超越标准 GitHub Flavored Markdown 的增强功能：
 - **数学公式：** 使用 `$行内$` 和 `$$块级$$` 语法编写 LaTeX 数学公式
 - **代码高亮：** 高级语法高亮，支持行号和复制按钮
 - **GitHub 卡片：** 使用 `::github{repo="用户/仓库"}` 嵌入仓库卡片
+- **PDF 在线阅读：** 在 Markdown 中使用 `<pdf src="/files/demo.pdf" title="示例文档" height="780"></pdf>` 嵌入 PDF 阅读器
 
 ### 🎨 视觉元素
 - **图片画廊：** 自动 PhotoSwipe 集成，支持图片查看
