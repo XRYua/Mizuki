@@ -25,3 +25,6 @@ published: 2023-10-19
 ## Bilibili
 
 <iframe width="100%" height="468" src="//player.bilibili.com/player.html?bvid=BV1fK4y1s7Qf&p=1&autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" &autoplay=0> </iframe>
+## PDF
+
+<pdf src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" title="PDF Demo" height="720"></pdf>
