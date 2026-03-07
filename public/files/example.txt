@@ -1,0 +1,8 @@
+这是一个 TXT 阅读器示例文件。
+
+你可以把自己的 .txt 文件放到 public/files/ 目录，
+然后在 Markdown 文章里使用：
+
+<txt src="/files/你的文件名.txt" title="标题" height="560"></txt>
+
+支持中文、英文以及多行纯文本内容。
