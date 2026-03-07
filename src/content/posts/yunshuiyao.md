@@ -20,4 +20,4 @@ draft: false
 
 下面是内嵌 TXT 阅读。为超大文本（如 300 万字级）场景，阅读器采用分块流式加载，尽量避免长时间卡顿。
 
-<txt src="/files/example.txt" title="学姐" height="560"></txt>
+<txt src="/files/原来你是这样的学姐.txt" title="学姐" height="560"></txt>
