@@ -1,0 +1,49 @@
+<section class="three-line-entry card-base mb-4 onload-animation">
+	<div class="entry-body">
+		<p class="entry-tag">✨ 活动进行中</p>
+		<h2>三行情书写</h2>
+		<p>发布三行短句，参与留言榜与点赞互动。</p>
+	</div>
+	<a class="entry-btn" href="/three-line-poem/">进入活动</a>
+</section>
+
+<style>
+	.three-line-entry {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 1.1rem;
+		border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
+		background: linear-gradient(120deg, color-mix(in oklab, var(--primary) 8%, var(--card-bg)), var(--card-bg));
+	}
+	.entry-tag {
+		margin: 0;
+		font-size: 0.82rem;
+		font-weight: 700;
+		color: var(--primary);
+	}
+	.entry-body h2 {
+		margin: 0.22rem 0;
+		font-size: 1.06rem;
+	}
+	.entry-body p {
+		margin: 0;
+	}
+	.entry-btn {
+		white-space: nowrap;
+		padding: 0.46rem 0.88rem;
+		border-radius: 999px;
+		border: 1px solid color-mix(in oklab, var(--primary) 35%, transparent);
+		background: color-mix(in oklab, var(--primary) 12%, transparent);
+		color: var(--primary);
+		font-weight: 700;
+		text-decoration: none;
+	}
+	@media (max-width: 768px) {
+		.three-line-entry {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+</style>

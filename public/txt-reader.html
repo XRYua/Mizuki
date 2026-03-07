@@ -138,6 +138,20 @@
 			const title = params.get("title") || "沉浸式文本阅读";
 			document.getElementById("reader-title").textContent = title;
 
+			function buildRequestUrl(rawSrc) {
+				if (!rawSrc) return "";
+				try {
+					const absolute = new URL(rawSrc, window.location.origin);
+					absolute.pathname = absolute.pathname
+						.split("/")
+						.map((segment) => encodeURIComponent(decodeURIComponent(segment)))
+						.join("/");
+					return absolute.toString();
+				} catch {
+					return encodeURI(rawSrc);
+				}
+			}
+
 			const viewport = document.getElementById("viewport");
 			const visibleLinesEl = document.getElementById("visible-lines");
 			const topSpacer = document.getElementById("top-spacer");
@@ -282,7 +296,7 @@
 					return;
 				}
 				try {
-					const response = await fetch(src);
+					const response = await fetch(buildRequestUrl(src));
 					if (!response.ok) {
 						throw new Error(`加载失败：${response.status}`);
 					}
