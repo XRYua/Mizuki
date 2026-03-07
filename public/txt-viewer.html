@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TXT Reader</title>
+		<style>
+			:root {
+				color-scheme: light dark;
+			}
+			html, body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				background: transparent;
+				font-family: "LXGW WenKai GB Screen", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+			}
+			#wrap {
+				height: 100%;
+				overflow: auto;
+				padding: 14px 16px;
+				box-sizing: border-box;
+			}
+			#meta {
+				font-size: 12px;
+				opacity: 0.72;
+				margin-bottom: 8px;
+			}
+			#content {
+				white-space: pre-wrap;
+				word-break: break-word;
+				line-height: 1.7;
+				font-size: 15px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="meta">Loading TXT...</div>
+			<pre id="content"></pre>
+		</div>
+
+		<script>
+			(async () => {
+				const params = new URLSearchParams(location.search);
+				const src = params.get("src");
+				const title = params.get("title") || "TXT Reader";
+				const metaEl = document.getElementById("meta");
+				const contentEl = document.getElementById("content");
+
+				document.title = title;
+
+				if (!src || !src.startsWith("/")) {
+					metaEl.textContent = "Invalid TXT source";
+					return;
+				}
+
+				try {
+					const res = await fetch(src, { cache: "force-cache" });
+					if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+					if (!res.body) {
+						contentEl.textContent = await res.text();
+						metaEl.textContent = `Loaded: ${title}`;
+						return;
+					}
+
+					const reader = res.body
+						.pipeThrough(new TextDecoderStream())
+						.getReader();
+
+					let totalChars = 0;
+					let frameBuffer = "";
+					let done = false;
+
+					const flush = () => {
+						if (!frameBuffer) return;
+						contentEl.append(document.createTextNode(frameBuffer));
+						totalChars += frameBuffer.length;
+						frameBuffer = "";
+						metaEl.textContent = `Loading: ${title} · ${totalChars.toLocaleString()} chars`;
+					};
+
+					while (!done) {
+						const { value, done: streamDone } = await reader.read();
+						done = streamDone;
+						if (value) frameBuffer += value;
+
+						if (frameBuffer.length >= 65536 || done) {
+							flush();
+							await new Promise(requestAnimationFrame);
+						}
+					}
+
+					metaEl.textContent = `Loaded: ${title} · ${totalChars.toLocaleString()} chars`;
+				} catch (error) {
+					metaEl.textContent = `Load failed: ${error instanceof Error ? error.message : String(error)}`;
+				}
+			})();
+		</script>
+	</body>
+</html>

@@ -104,7 +104,6 @@ const stats = [
 		icon: "material-symbols:ecg-heart-outline",
 		label: i18n(I18nKey.siteStatsLastUpdate),
 		value: 0, // 将由客户端更新
-		suffix: i18n(I18nKey.siteStatsDaysAgo).replace("{days}", ""),
 		dynamic: true,
 		id: "last-update",
 	},
@@ -178,12 +177,24 @@ const stats = [
 				timeSinceLastPost / (1000 * 60 * 60 * 24),
 			);
 
+			let lastUpdateText = "";
+			if (daysSinceLastUpdate > 16) {
+				lastUpdateText = `${daysSinceLastUpdate}天`;
+			} else {
+				const totalSeconds = Math.floor(timeSinceLastPost / 1000);
+				const hours = Math.floor(totalSeconds / 3600);
+				const minutes = Math.floor((totalSeconds % 3600) / 60);
+				const seconds = totalSeconds % 60;
+				const pad = (n) => n.toString().padStart(2, "0");
+				lastUpdateText = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+			}
+
 			const lastUpdateElements = document.querySelectorAll(
 				'[data-stat-id="last-update"]',
 			);
 			if (lastUpdateElements.length > 0) {
 				lastUpdateElements.forEach(element => {
-					element.textContent = daysSinceLastUpdate.toString();
+					element.textContent = lastUpdateText;
 				})
 			}
 		}
@@ -192,6 +203,6 @@ const stats = [
 	// 页面加载时更新
 	updateDynamicStats();
 
-	// 每小时更新一次（可选，因为天数变化较慢）
-	setInterval(updateDynamicStats, 60 * 60 * 1000);
+	// 每秒更新一次：不足 16 天时需要显示到秒
+	setInterval(updateDynamicStats, 1000);
 </script>
