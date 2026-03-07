@@ -7,12 +7,13 @@
 		<style>
 			:root {
 				color-scheme: light dark;
-				--bg: #0b1020;
-				--card: rgba(15, 23, 42, 0.82);
-				--text: #e7ecf5;
-				--subtle: #9aa6ba;
-				--accent: #7dd3fc;
+				--bg: #070a16;
+				--card: rgba(12, 18, 36, 0.76);
+				--text: #eef3ff;
+				--subtle: #a5b1ca;
+				--accent: #93c5fd;
 				--border: rgba(148, 163, 184, 0.25);
+				--shadow: 0 14px 36px rgba(2, 6, 23, 0.45);
 			}
 			* {
 				box-sizing: border-box;
@@ -26,11 +27,10 @@
 					"PingFang SC",
 					"Microsoft YaHei",
 					sans-serif;
-				background: radial-gradient(
-					circle at top,
-					#111b38,
-					var(--bg) 38%
-				);
+				background:
+					radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.24), transparent 45%),
+					radial-gradient(circle at 100% 10%, rgba(244, 114, 182, 0.14), transparent 34%),
+					var(--bg);
 				color: var(--text);
 			}
 			header {
@@ -38,9 +38,10 @@
 				top: 0;
 				z-index: 20;
 				padding: 10px 14px;
-				background: var(--card);
+				background: color-mix(in oklab, var(--card) 88%, transparent);
 				backdrop-filter: blur(8px);
 				border-bottom: 1px solid var(--border);
+				box-shadow: var(--shadow);
 			}
 			.toolbar {
 				display: grid;
@@ -56,18 +57,21 @@
 			.search-input {
 				width: 100%;
 				padding: 8px 10px;
-				border-radius: 8px;
+				border-radius: 10px;
 				border: 1px solid var(--border);
 				background: rgba(15, 23, 42, 0.65);
 				color: var(--text);
 			}
 			button {
 				padding: 8px 10px;
-				border-radius: 8px;
+				border-radius: 10px;
 				border: 1px solid var(--border);
-				background: rgba(30, 41, 59, 0.75);
+				background: linear-gradient(150deg, rgba(37, 99, 235, 0.25), rgba(30, 41, 59, 0.72));
 				color: var(--text);
 				cursor: pointer;
+			}
+			button:hover:not(:disabled) {
+				border-color: color-mix(in oklab, var(--accent) 46%, var(--border));
 			}
 			button:disabled {
 				opacity: 0.45;
@@ -82,7 +86,7 @@
 			main {
 				height: calc(100vh - 130px);
 				overflow: auto;
-				padding: 0 16px 16px;
+				padding: 10px 16px 16px;
 			}
 			.reader {
 				position: relative;
@@ -90,16 +94,20 @@
 					ui-monospace, SFMono-Regular, Menlo, Consolas,
 					"Liberation Mono", monospace;
 				line-height: 1.85;
-				font-size: 15px;
+				font-size: 15.5px;
 				white-space: pre-wrap;
 				word-break: break-word;
+				padding: 12px;
+				border-radius: 12px;
+				border: 1px solid color-mix(in oklab, var(--accent) 22%, var(--border));
+				background: linear-gradient(165deg, rgba(15, 23, 42, 0.92), rgba(10, 14, 28, 0.9));
 			}
 			.spacer {
 				width: 1px;
 			}
 			.line {
-				padding: 0 6px;
-				border-radius: 4px;
+				padding: 1px 8px;
+				border-radius: 6px;
 			}
 			.line.match-active {
 				background: rgba(125, 211, 252, 0.18);
