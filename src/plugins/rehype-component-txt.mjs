@@ -64,10 +64,23 @@ export function TxtViewerComponent(properties, children) {
 			h(
 				"a",
 				{
+					href: viewerUrl,
+					target: "_blank",
+					rel: "noreferrer noopener",
+					class: "no-styling",
+					"data-no-swup": "",
+				},
+				`沉浸阅读：${title}`,
+			),
+			h("span", { class: "txt-separator" }, " · "),
+			h(
+				"a",
+				{
 					href: src,
 					target: "_blank",
 					rel: "noreferrer noopener",
 					class: "no-styling",
+					"data-no-swup": "",
 				},
 				`在新标签打开：${title}`,
 			),
