@@ -1,35 +1,39 @@
 ---
-title: 我导入了 TXT 阅读器
+title: TXT Reader Integration
 published: 2026-03-07
-description: 记录一下博客里新增的 TXT 文件在线阅读功能与使用方式。
+description: Notes on the embedded TXT reader and how to use it in Markdown posts.
 tags: [TXT, Markdown, Reader]
 category: Notes
 draft: false
 ---
 
-最近我给博客导入了 **TXT 阅读器**，现在可以在 Markdown 文章中直接嵌入 `.txt` 文件进行在线阅读。
+I integrated a **TXT reader** into the blog, so `.txt` files can now be embedded and read directly inside Markdown posts.
 
-## 用法
+## Usage
 
-在文章里写：
+Add this tag in your article:
 
 ```html
 <txt src="/files/example.txt" title="TXT Demo" height="560"></txt>
 ```
 
-- `src`：TXT 文件路径（必填）
-- `title`：阅读器标题（可选）
-- `height`：阅读区域高度（可选）
+- `src`: TXT file path (required)
+- `title`: Reader title (optional)
+- `height`: Viewer height (optional)
 
-## TXT 文件放置位置
+## TXT file location
 
-请把 TXT 文件放在：`public/files/` 目录。
+Place TXT files under: `public/files/`
 
-例如：
+For example:
 
-- 本地文件：`public/files/example.txt`
-- 文章里引用地址：`/files/example.txt`
+- Local file: `public/files/example.txt`
+- URL in Markdown: `/files/example.txt`
 
-## 示例
+## Large file support
+
+The reader streams and renders text progressively, which helps keep scrolling and interaction smooth even for very large files.
+
+## Example
 
 <txt src="/files/example.txt" title="TXT Demo" height="560"></txt>
