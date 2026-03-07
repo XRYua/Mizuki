@@ -56,7 +56,7 @@ export function TxtViewerComponent(properties, children) {
 		h("iframe", {
 			src: viewerUrl,
 			title,
-			loading: "lazy",
+			loading: "eager",
 			class: "embed-txt-frame",
 			height,
 		}),

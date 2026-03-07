@@ -135,8 +135,22 @@
 		<script>
 			const params = new URLSearchParams(window.location.search);
 			const src = params.get("src");
-			const title = params.get("title") || "TXT Reader";
+			const title = params.get("title") || "沉浸式文本阅读";
 			document.getElementById("reader-title").textContent = title;
+
+			function buildRequestUrl(rawSrc) {
+				if (!rawSrc) return "";
+				try {
+					const absolute = new URL(rawSrc, window.location.origin);
+					absolute.pathname = absolute.pathname
+						.split("/")
+						.map((segment) => encodeURIComponent(decodeURIComponent(segment)))
+						.join("/");
+					return absolute.toString();
+				} catch {
+					return encodeURI(rawSrc);
+				}
+			}
 
 			const viewport = document.getElementById("viewport");
 			const visibleLinesEl = document.getElementById("visible-lines");
@@ -282,11 +296,15 @@
 					return;
 				}
 				try {
-					const response = await fetch(src);
-					if (!response.ok || !response.body) {
+					const response = await fetch(buildRequestUrl(src));
+					if (!response.ok) {
 						throw new Error(`加载失败：${response.status}`);
 					}
 
+
+					if (!response.body) {
+						state.text = await response.text();
+					} else {
 					const reader = response.body.getReader();
 					const decoder = new TextDecoder("utf-8");
 					const parts = [];
@@ -304,6 +322,7 @@
 					}
 					parts.push(decoder.decode());
 					state.text = parts.join("");
+					}
 
 					const rawLines = state.text
 						.replace(/\r\n/g, "\n")
