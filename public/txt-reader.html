@@ -313,23 +313,23 @@
 					if (!response.body) {
 						state.text = await response.text();
 					} else {
-					const reader = response.body.getReader();
-					const decoder = new TextDecoder("utf-8");
-					const parts = [];
-					let loadedBytes = 0;
-					while (true) {
-						const { value, done } = await reader.read();
-						if (done) break;
-						loadedBytes += value.byteLength;
-						parts.push(decoder.decode(value, { stream: true }));
-						if (parts.length % 20 === 0) {
-							setStatus(
-								`正在加载：${Math.round(loadedBytes / 1024)} KB`,
-							);
+						const reader = response.body.getReader();
+						const decoder = new TextDecoder("utf-8");
+						const parts = [];
+						let loadedBytes = 0;
+						while (true) {
+							const { value, done } = await reader.read();
+							if (done) break;
+							loadedBytes += value.byteLength;
+							parts.push(decoder.decode(value, { stream: true }));
+							if (parts.length % 20 === 0) {
+								setStatus(
+									`正在加载：${Math.round(loadedBytes / 1024)} KB`,
+								);
+							}
 						}
-					}
-					parts.push(decoder.decode());
-					state.text = parts.join("");
+						parts.push(decoder.decode());
+						state.text = parts.join("");
 					}
 
 					const rawLines = state.text
