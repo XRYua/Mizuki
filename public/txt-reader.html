@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,127 +7,351 @@
 		<style>
 			:root {
 				color-scheme: light dark;
+				--bg: #0b1020;
+				--card: rgba(15, 23, 42, 0.82);
+				--text: #e7ecf5;
+				--subtle: #9aa6ba;
+				--accent: #7dd3fc;
+				--border: rgba(148, 163, 184, 0.25);
+			}
+			* {
+				box-sizing: border-box;
 			}
 			body {
 				margin: 0;
 				font-family:
-					ui-monospace, SFMono-Regular, Menlo, Consolas,
-					"Liberation Mono", monospace;
-				background: #0b0e14;
-				color: #e8ecf1;
+					ui-sans-serif,
+					system-ui,
+					-apple-system,
+					"PingFang SC",
+					"Microsoft YaHei",
+					sans-serif;
+				background: radial-gradient(
+					circle at top,
+					#111b38,
+					var(--bg) 38%
+				);
+				color: var(--text);
 			}
 			header {
 				position: sticky;
 				top: 0;
-				z-index: 10;
-				padding: 12px 16px;
-				background: rgba(11, 14, 20, 0.92);
-				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-				font-weight: 600;
+				z-index: 20;
+				padding: 10px 14px;
+				background: var(--card);
+				backdrop-filter: blur(8px);
+				border-bottom: 1px solid var(--border);
+			}
+			.toolbar {
+				display: grid;
+				grid-template-columns: 1fr auto auto;
+				gap: 8px;
+				align-items: center;
+			}
+			#reader-title {
+				margin: 0 0 8px;
+				font-size: 16px;
+				font-weight: 700;
+			}
+			.search-input {
+				width: 100%;
+				padding: 8px 10px;
+				border-radius: 8px;
+				border: 1px solid var(--border);
+				background: rgba(15, 23, 42, 0.65);
+				color: var(--text);
+			}
+			button {
+				padding: 8px 10px;
+				border-radius: 8px;
+				border: 1px solid var(--border);
+				background: rgba(30, 41, 59, 0.75);
+				color: var(--text);
+				cursor: pointer;
+			}
+			button:disabled {
+				opacity: 0.45;
+				cursor: not-allowed;
+			}
+			.status {
+				margin-top: 8px;
+				font-size: 12px;
+				color: var(--subtle);
+				min-height: 18px;
 			}
 			main {
-				height: calc(100vh - 52px);
+				height: calc(100vh - 130px);
 				overflow: auto;
-				padding: 16px;
+				padding: 0 16px 16px;
 			}
-			pre {
-				margin: 0;
+			.reader {
+				position: relative;
+				font-family:
+					ui-monospace, SFMono-Regular, Menlo, Consolas,
+					"Liberation Mono", monospace;
+				line-height: 1.85;
+				font-size: 15px;
 				white-space: pre-wrap;
 				word-break: break-word;
-				line-height: 1.65;
 			}
-			.loading,
-			.error {
-				font-family:
-					system-ui,
-					-apple-system,
-					sans-serif;
+			.spacer {
+				width: 1px;
+			}
+			.line {
+				padding: 0 6px;
+				border-radius: 4px;
+			}
+			.line.match-active {
+				background: rgba(125, 211, 252, 0.18);
 			}
 			.error {
-				color: #ff9090;
+				color: #ff9b9b;
 			}
 		</style>
 	</head>
 	<body>
-		<header id="reader-title">TXT Reader</header>
-		<main>
-			<pre id="content" class="loading">Loading text...</pre>
+		<header>
+			<h1 id="reader-title">TXT Reader</h1>
+			<div class="toolbar">
+				<input
+					id="search-input"
+					class="search-input"
+					type="search"
+					placeholder="查找内容（回车跳转）"
+				/>
+				<button id="prev-match" disabled>上一个</button>
+				<button id="next-match" disabled>下一个</button>
+			</div>
+			<div id="status" class="status">正在加载文本…</div>
+		</header>
+		<main id="viewport">
+			<div id="reader" class="reader">
+				<div id="top-spacer" class="spacer"></div>
+				<div id="visible-lines"></div>
+				<div id="bottom-spacer" class="spacer"></div>
+			</div>
 		</main>
+
 		<script>
 			const params = new URLSearchParams(window.location.search);
 			const src = params.get("src");
 			const title = params.get("title") || "TXT Reader";
-			const titleElement = document.getElementById("reader-title");
-			const contentElement = document.getElementById("content");
-			titleElement.textContent = title;
+			document.getElementById("reader-title").textContent = title;
 
-			if (!src) {
-				contentElement.className = "error";
-				contentElement.textContent = "Missing src parameter.";
-			} else {
-				(async () => {
-					try {
-						const response = await fetch(src);
-						if (!response.ok || !response.body) {
-							throw new Error(
-								`Failed to load text file: ${response.status}`,
+			const viewport = document.getElementById("viewport");
+			const visibleLinesEl = document.getElementById("visible-lines");
+			const topSpacer = document.getElementById("top-spacer");
+			const bottomSpacer = document.getElementById("bottom-spacer");
+			const statusEl = document.getElementById("status");
+			const searchInput = document.getElementById("search-input");
+			const prevBtn = document.getElementById("prev-match");
+			const nextBtn = document.getElementById("next-match");
+
+			const state = {
+				text: "",
+				lines: [],
+				lineStartOffsets: [],
+				lineHeight: 28,
+				renderedStart: -1,
+				renderedEnd: -1,
+				matches: [],
+				activeMatchIndex: -1,
+				activeLine: -1,
+			};
+
+			function setStatus(message, isError = false) {
+				statusEl.textContent = message;
+				statusEl.className = isError ? "status error" : "status";
+			}
+
+			function estimateLineHeight() {
+				const probe = document.createElement("div");
+				probe.className = "line";
+				probe.textContent = "测";
+				visibleLinesEl.appendChild(probe);
+				state.lineHeight = Math.max(
+					22,
+					probe.getBoundingClientRect().height,
+				);
+				visibleLinesEl.removeChild(probe);
+			}
+
+			function clamp(v, min, max) {
+				return Math.max(min, Math.min(max, v));
+			}
+
+			function renderVisible() {
+				if (!state.lines.length) return;
+				const overscan = 40;
+				const first = clamp(
+					Math.floor(viewport.scrollTop / state.lineHeight) -
+						overscan,
+					0,
+					state.lines.length - 1,
+				);
+				const visibleCount =
+					Math.ceil(viewport.clientHeight / state.lineHeight) +
+					overscan * 2;
+				const last = clamp(
+					first + visibleCount,
+					first,
+					state.lines.length - 1,
+				);
+				if (first === state.renderedStart && last === state.renderedEnd)
+					return;
+
+				state.renderedStart = first;
+				state.renderedEnd = last;
+				topSpacer.style.height = `${first * state.lineHeight}px`;
+				bottomSpacer.style.height = `${(state.lines.length - last - 1) * state.lineHeight}px`;
+
+				const fragment = document.createDocumentFragment();
+				for (let i = first; i <= last; i++) {
+					const line = document.createElement("div");
+					line.className = "line";
+					if (i === state.activeLine)
+						line.classList.add("match-active");
+					line.textContent = state.lines[i] || " ";
+					fragment.appendChild(line);
+				}
+				visibleLinesEl.replaceChildren(fragment);
+			}
+
+			function findLineByCharOffset(offset) {
+				let low = 0;
+				let high = state.lineStartOffsets.length - 1;
+				while (low <= high) {
+					const mid = (low + high) >> 1;
+					if (state.lineStartOffsets[mid] <= offset) low = mid + 1;
+					else high = mid - 1;
+				}
+				return Math.max(0, high);
+			}
+
+			function jumpToMatch(index) {
+				if (!state.matches.length) return;
+				state.activeMatchIndex =
+					(index + state.matches.length) % state.matches.length;
+				const charIndex = state.matches[state.activeMatchIndex];
+				const line = findLineByCharOffset(charIndex);
+				state.activeLine = line;
+				viewport.scrollTop = line * state.lineHeight;
+				renderVisible();
+				setStatus(
+					`匹配 ${state.activeMatchIndex + 1}/${state.matches.length}（第 ${line + 1} 行）`,
+				);
+			}
+
+			function doSearch() {
+				const keyword = searchInput.value.trim();
+				state.matches = [];
+				state.activeMatchIndex = -1;
+				state.activeLine = -1;
+				if (!keyword) {
+					prevBtn.disabled = true;
+					nextBtn.disabled = true;
+					renderVisible();
+					setStatus(
+						`已加载 ${state.lines.length.toLocaleString()} 行，输入关键词开始查找。`,
+					);
+					return;
+				}
+
+				let start = 0;
+				while (true) {
+					const i = state.text.indexOf(keyword, start);
+					if (i === -1) break;
+					state.matches.push(i);
+					start = i + Math.max(1, keyword.length);
+					if (state.matches.length >= 20000) break;
+				}
+
+				prevBtn.disabled = state.matches.length === 0;
+				nextBtn.disabled = state.matches.length === 0;
+				if (!state.matches.length) {
+					renderVisible();
+					setStatus(`未找到“${keyword}”。`);
+					return;
+				}
+				jumpToMatch(0);
+			}
+
+			async function loadText() {
+				if (!src) {
+					setStatus("缺少 src 参数。", true);
+					return;
+				}
+				try {
+					const response = await fetch(src);
+					if (!response.ok || !response.body) {
+						throw new Error(`加载失败：${response.status}`);
+					}
+
+					const reader = response.body.getReader();
+					const decoder = new TextDecoder("utf-8");
+					const parts = [];
+					let loadedBytes = 0;
+					while (true) {
+						const { value, done } = await reader.read();
+						if (done) break;
+						loadedBytes += value.byteLength;
+						parts.push(decoder.decode(value, { stream: true }));
+						if (parts.length % 20 === 0) {
+							setStatus(
+								`正在加载：${Math.round(loadedBytes / 1024)} KB`,
 							);
 						}
-
-						contentElement.className = "";
-						contentElement.textContent = "";
-
-						const reader = response.body.getReader();
-						const decoder = new TextDecoder("utf-8");
-						const queue = [];
-						let done = false;
-						let rendering = false;
-
-						const flush = () => {
-							if (rendering) return;
-							rendering = true;
-							requestAnimationFrame(() => {
-								let budget = 120000;
-								while (queue.length > 0 && budget > 0) {
-									const text = queue.shift();
-									contentElement.append(
-										document.createTextNode(text),
-									);
-									budget -= text.length;
-								}
-								rendering = false;
-								if (queue.length > 0) {
-									flush();
-								} else if (done) {
-									const remain = decoder.decode();
-									if (remain) {
-										contentElement.append(
-											document.createTextNode(remain),
-										);
-									}
-								}
-							});
-						};
-
-						while (true) {
-							const { value, done: streamDone } =
-								await reader.read();
-							if (streamDone) break;
-							queue.push(decoder.decode(value, { stream: true }));
-							flush();
-						}
-
-						done = true;
-						flush();
-					} catch (error) {
-						contentElement.className = "error";
-						contentElement.textContent =
-							error instanceof Error
-								? error.message
-								: "Unknown error";
 					}
-				})();
+					parts.push(decoder.decode());
+					state.text = parts.join("");
+
+					const rawLines = state.text
+						.replace(/\r\n/g, "\n")
+						.split("\n");
+					state.lines = rawLines;
+					state.lineStartOffsets = new Array(rawLines.length);
+					let offset = 0;
+					for (let i = 0; i < rawLines.length; i++) {
+						state.lineStartOffsets[i] = offset;
+						offset += rawLines[i].length + 1;
+					}
+
+					estimateLineHeight();
+					renderVisible();
+					setStatus(
+						`加载完成：${state.lines.length.toLocaleString()} 行，约 ${state.text.length.toLocaleString()} 字符。`,
+					);
+				} catch (error) {
+					setStatus(
+						error instanceof Error ? error.message : "未知错误",
+						true,
+					);
+				}
 			}
+
+			viewport.addEventListener("scroll", () =>
+				requestAnimationFrame(renderVisible),
+			);
+			window.addEventListener("resize", () =>
+				requestAnimationFrame(renderVisible),
+			);
+			searchInput.addEventListener("keydown", (e) => {
+				if (e.key === "Enter") {
+					e.preventDefault();
+					if (!state.matches.length || state.activeMatchIndex === -1)
+						doSearch();
+					else jumpToMatch(state.activeMatchIndex + 1);
+				}
+			});
+			searchInput.addEventListener("change", doSearch);
+			prevBtn.addEventListener("click", () =>
+				jumpToMatch(state.activeMatchIndex - 1),
+			);
+			nextBtn.addEventListener("click", () =>
+				jumpToMatch(state.activeMatchIndex + 1),
+			);
+
+			loadText();
 		</script>
 	</body>
 </html>
