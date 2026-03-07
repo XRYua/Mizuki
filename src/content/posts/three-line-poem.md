@@ -5,6 +5,7 @@ description: 愿每一封情，都能被温柔读到
 tags: [活动, 三行情书, 留言]
 category: Notes
 draft: false
+comment: false
 ---
 
 风起时，纸页会轻轻翻身。
@@ -21,6 +22,8 @@ draft: false
 - 与来访者互相点赞，让温柔被看见。
 
 ## 三行情书写 · 活动场地
+
+（若网络较慢，活动卡片会稍后出现，请等待 1-2 秒。）
 
 <iframe
   src="/three-line-poem-space/"

@@ -18,7 +18,7 @@ The TXT Reader lets you open and read `.txt` files directly inside a blog post.
 Use the custom tag below inside Markdown:
 
 ```html
-<txt src="/files/example.txt" title="TXT Demo" height="560"></txt>
+<txt src="/files/原来你是这样的学姐？反差傲娇学姐不会主动开口说爱我.txt" title="原来你是这样的学姐" height="560"></txt>
 ```
 
 ## Parameters
@@ -33,8 +33,8 @@ Put txt files under `public/files/`.
 
 Example mapping:
 
-- Local file: `public/files/example.txt`
-- URL in markdown: `/files/example.txt`
+- Local file: `public/files/原来你是这样的学姐？反差傲娇学姐不会主动开口说爱我.txt`
+- URL in markdown: `/files/原来你是这样的学姐？反差傲娇学姐不会主动开口说爱我.txt`
 
 ## Notes
 

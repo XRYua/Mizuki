@@ -13,6 +13,7 @@
 				--subtle: #9aa6ba;
 				--accent: #7dd3fc;
 				--border: rgba(148, 163, 184, 0.25);
+				--soft: rgba(125, 211, 252, 0.08);
 			}
 			* {
 				box-sizing: border-box;
@@ -81,6 +82,7 @@
 			}
 			main {
 				height: calc(100vh - 130px);
+				border-top: 1px solid var(--border);
 				overflow: auto;
 				padding: 0 16px 16px;
 			}
@@ -91,6 +93,8 @@
 					"Liberation Mono", monospace;
 				line-height: 1.85;
 				font-size: 15px;
+				padding: 12px 8px;
+				background: linear-gradient(180deg, var(--soft), transparent 25%);
 				white-space: pre-wrap;
 				word-break: break-word;
 			}
@@ -171,6 +175,7 @@
 				matches: [],
 				activeMatchIndex: -1,
 				activeLine: -1,
+				manualJumping: false,
 			};
 
 			function setStatus(message, isError = false) {
@@ -249,8 +254,12 @@
 				const charIndex = state.matches[state.activeMatchIndex];
 				const line = findLineByCharOffset(charIndex);
 				state.activeLine = line;
+				state.manualJumping = true;
 				viewport.scrollTop = line * state.lineHeight;
 				renderVisible();
+				setTimeout(() => {
+					state.manualJumping = false;
+				}, 120);
 				setStatus(
 					`匹配 ${state.activeMatchIndex + 1}/${state.matches.length}（第 ${line + 1} 行）`,
 				);
@@ -301,7 +310,6 @@
 						throw new Error(`加载失败：${response.status}`);
 					}
 
-
 					if (!response.body) {
 						state.text = await response.text();
 					} else {
@@ -336,6 +344,7 @@
 					}
 
 					estimateLineHeight();
+					viewport.scrollTop = 0;
 					renderVisible();
 					setStatus(
 						`加载完成：${state.lines.length.toLocaleString()} 行，约 ${state.text.length.toLocaleString()} 字符。`,
@@ -348,9 +357,12 @@
 				}
 			}
 
-			viewport.addEventListener("scroll", () =>
-				requestAnimationFrame(renderVisible),
-			);
+			if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+
+			viewport.addEventListener("scroll", () => {
+				if (state.manualJumping) return;
+				requestAnimationFrame(renderVisible);
+			});
 			window.addEventListener("resize", () =>
 				requestAnimationFrame(renderVisible),
 			);
