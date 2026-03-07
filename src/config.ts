@@ -169,6 +169,7 @@ export const siteConfig: SiteConfig = {
 				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
 				"今日はなんでもない日。でも、ちょっとだけいい日",
 				"过客，你携秋水揽星河",
+				"云水之间 字句有痕",
 			],
 			typewriter: {
 				enable: true, // 启用副标题打字机效果
@@ -365,8 +366,8 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/avatar.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
-	name: "まつざか ゆき",
-	bio: "世界は大きい、君は行かなければならない",
+	name: "云",
+	bio: "云水之间 字句有痕",
 	typewriter: {
 		enable: true, // 启用个人简介打字机效果
 		speed: 80, // 打字速度（毫秒）
