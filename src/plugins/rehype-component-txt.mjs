@@ -23,14 +23,21 @@ export function TxtViewerComponent(properties, children) {
 		);
 	}
 
-	const src =
+	const rawSrc =
 		typeof properties?.src === "string" ? properties.src.trim() : "";
-	if (!src) {
+	if (!rawSrc) {
 		return h(
 			"div",
 			{ class: "hidden" },
 			'Invalid TXT source. ("src" attribute is required for <txt>)',
 		);
+	}
+
+	let src = rawSrc;
+	try {
+		src = decodeURIComponent(rawSrc);
+	} catch {
+		src = rawSrc;
 	}
 
 	const title =
@@ -42,7 +49,8 @@ export function TxtViewerComponent(properties, children) {
 			? properties.height.trim()
 			: "560";
 
-	const viewerUrl = `/txt-reader.html?src=${encodeURIComponent(src)}&title=${encodeURIComponent(title)}`;
+	const viewerParams = new URLSearchParams({ src, title });
+	const viewerUrl = `/txt-reader.html?${viewerParams.toString()}`;
 
 	return h("figure", { class: "embed-txt" }, [
 		h("iframe", {

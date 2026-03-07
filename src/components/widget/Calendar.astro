@@ -161,6 +161,7 @@ const yearSuffix = isChinese ? "年" : " ";
 						const [y, m] = matchedPost.date.split("-");
 						currentYear = parseInt(y);
 						currentMonth = parseInt(m) - 1;
+						selectedDateKey = matchedPost.date;
 					}
 				}
 				renderCalendar();
@@ -225,16 +226,20 @@ const yearSuffix = isChinese ? "年" : " ";
 		divider: calendarRoot?.querySelector("#calendar-posts-divider"),
 	};
 
-	function getCurrentPostId() {
-		const path = window.location.pathname;
-		if (!allPostsData || allPostsData.length === 0) return null;
-		const decodedPath = decodeURIComponent(path);
-		const normalizedPath = decodedPath.endsWith("/")
-			? decodedPath.slice(0, -1)
-			: decodedPath;
+	function normalizePathname(pathname) {
+		if (!pathname) return "/";
+		const decoded = decodeURIComponent(pathname);
+		const withoutSlash = decoded.endsWith("/") ? decoded.slice(0, -1) : decoded;
+		return withoutSlash || "/";
+	}
 
+	function getCurrentPostId() {
+		if (!allPostsData || allPostsData.length === 0) return null;
+		const currentPath = normalizePathname(window.location.pathname);
 		const matchedPost = allPostsData.find((post) => {
-			return normalizedPath.endsWith(`/${post.id}`);
+			if (!post.url) return false;
+			const postPath = normalizePathname(new URL(post.url, window.location.origin).pathname);
+			return postPath === currentPath;
 		});
 		return matchedPost ? matchedPost.id : null;
 	}
