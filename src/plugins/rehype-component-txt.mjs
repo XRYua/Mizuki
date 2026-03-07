@@ -23,7 +23,8 @@ export function TxtViewerComponent(properties, children) {
 		);
 	}
 
-	const src = typeof properties?.src === "string" ? properties.src.trim() : "";
+	const src =
+		typeof properties?.src === "string" ? properties.src.trim() : "";
 	if (!src) {
 		return h(
 			"div",
@@ -41,9 +42,23 @@ export function TxtViewerComponent(properties, children) {
 			? properties.height.trim()
 			: "560";
 
+	// If markdown already provides a URL-encoded path, decode it first to avoid double-encoding
+	// (%E4... -> %25E4...) when building query parameters.
+	let normalizedSrc = src;
+	try {
+		normalizedSrc = decodeURIComponent(src);
+	} catch {
+		normalizedSrc = src;
+	}
+
+	const viewerUrl = `/txt-reader.html?${new URLSearchParams({
+		src: normalizedSrc,
+		title,
+	}).toString()}`;
+
 	return h("figure", { class: "embed-txt" }, [
 		h("iframe", {
-			src,
+			src: viewerUrl,
 			title,
 			loading: "lazy",
 			class: "embed-txt-frame",
@@ -53,12 +68,23 @@ export function TxtViewerComponent(properties, children) {
 			h(
 				"a",
 				{
-					href: src,
+					href: viewerUrl,
 					target: "_blank",
 					rel: "noreferrer noopener",
 					class: "no-styling",
 				},
-				`在新标签打开：${title}`,
+				`打开阅读器：${title}`,
+			),
+			h(
+				"a",
+				{
+					href: normalizedSrc,
+					target: "_blank",
+					rel: "noreferrer noopener",
+					class: "no-styling",
+					style: "margin-left: 1rem;",
+				},
+				"原始 TXT",
 			),
 		]),
 	]);

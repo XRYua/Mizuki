@@ -104,7 +104,6 @@ const stats = [
 		icon: "material-symbols:ecg-heart-outline",
 		label: i18n(I18nKey.siteStatsLastUpdate),
 		value: 0, // 将由客户端更新
-		suffix: i18n(I18nKey.siteStatsDaysAgo).replace("{days}", ""),
 		dynamic: true,
 		id: "last-update",
 	},
@@ -138,8 +137,11 @@ const stats = [
 								? formatNumber(stat.value)
 								: stat.value}
 						</span>
-						{stat.suffix && (
-							<span class="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
+						{(stat.suffix || stat.id === "last-update") && (
+							<span
+								class="text-sm text-neutral-500 dark:text-neutral-400 ml-1"
+								data-stat-suffix-id={stat.id}
+							>
 								{stat.suffix}
 							</span>
 						)}
@@ -150,7 +152,14 @@ const stats = [
 	</div>
 </WidgetLayout>
 
-<script is:inline define:vars={{ siteStartDate, lastPostDate }}>
+<script
+	is:inline
+	define:vars={{
+		siteStartDate,
+		lastPostDate,
+		lastUpdateDaysSuffix: i18n(I18nKey.siteStatsDaysAgo).replace("{days}", ""),
+	}}
+>
 	function updateDynamicStats() {
 		const today = new Date();
 
@@ -171,9 +180,7 @@ const stats = [
 		// 更新最后活动时间
 		if (lastPostDate) {
 			const lastPost = new Date(lastPostDate);
-			const timeSinceLastPost = Math.abs(
-				today.getTime() - lastPost.getTime(),
-			);
+			const timeSinceLastPost = Math.abs(today.getTime() - lastPost.getTime());
 			const daysSinceLastUpdate = Math.floor(
 				timeSinceLastPost / (1000 * 60 * 60 * 24),
 			);
@@ -181,10 +188,35 @@ const stats = [
 			const lastUpdateElements = document.querySelectorAll(
 				'[data-stat-id="last-update"]',
 			);
+			const lastUpdateSuffixElements = document.querySelectorAll(
+				'[data-stat-suffix-id="last-update"]',
+			);
+
 			if (lastUpdateElements.length > 0) {
-				lastUpdateElements.forEach(element => {
-					element.textContent = daysSinceLastUpdate.toString();
-				})
+				if (daysSinceLastUpdate >= 16) {
+					lastUpdateElements.forEach(element => {
+						element.textContent = daysSinceLastUpdate.toString();
+					});
+					lastUpdateSuffixElements.forEach(element => {
+						element.textContent = lastUpdateDaysSuffix;
+					});
+				} else {
+					const totalSeconds = Math.floor(timeSinceLastPost / 1000);
+					const hours = Math.floor((totalSeconds % 86400) / 3600)
+						.toString()
+						.padStart(2, "0");
+					const minutes = Math.floor((totalSeconds % 3600) / 60)
+						.toString()
+						.padStart(2, "0");
+					const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+
+					lastUpdateElements.forEach(element => {
+						element.textContent = `${hours}时 ${minutes}分 ${seconds}秒`;
+					});
+					lastUpdateSuffixElements.forEach(element => {
+						element.textContent = "";
+					});
+				}
 			}
 		}
 	}
@@ -192,6 +224,6 @@ const stats = [
 	// 页面加载时更新
 	updateDynamicStats();
 
-	// 每小时更新一次（可选，因为天数变化较慢）
-	setInterval(updateDynamicStats, 60 * 60 * 1000);
+	// 每秒更新一次，保证时分秒实时变化
+	setInterval(updateDynamicStats, 1000);
 </script>
