@@ -12,14 +12,20 @@ const twikooConfig = {
 	<div class="activity-header">
 		<p class="activity-eyebrow">✨ 置顶活动</p>
 		<h2>三行情书写</h2>
-		<p>留下你的三行心事，所有访客都可以查看、点赞和互动。</p>
+		<p>你可以在这里写下三行：一句给自己，一句给远方，一句给还没说出口的心事。</p>
+	</div>
+
+	<div class="activity-note">
+		<p>今夜把词句借给风吧：写一小段星光，写一口迟到的晚安，写一封没寄出的心事。</p>
 	</div>
 
 	<div class="activity-board">
 		<div class="board-title">💌 活动留言墙（Twikoo）</div>
-		<p class="board-tip">使用昵称 + 邮箱标识后，即可发布三行短句；也可以给喜欢的留言点赞。</p>
+		<p class="board-tip">使用昵称 + 邮箱标识后即可落笔，也可以给喜欢的字句点一个赞。</p>
 		<div id="three-line-twikoo" class="twikoo-host"></div>
 	</div>
+
+	<p class="activity-ending">愿每一封情，都能被温柔读到。</p>
 </section>
 
 <script is:inline src="/scroll-protection.js"></script>
@@ -61,6 +67,18 @@ const twikooConfig = {
 	}
 	.activity-header h2 { margin: .25rem 0; font-size: 1.4rem; }
 	.activity-eyebrow { color: var(--primary); font-weight: 700; margin: 0; }
+	.activity-note {
+		margin-top: .75rem;
+		padding: .7rem .8rem;
+		border: 1px dashed color-mix(in oklab, var(--primary) 26%, transparent);
+		border-radius: .75rem;
+		background: color-mix(in oklab, var(--card-bg) 90%, var(--primary) 10%);
+	}
+	.activity-note p {
+		margin: 0;
+		opacity: .9;
+		line-height: 1.75;
+	}
 	.activity-board { margin-top: 1rem; }
 	.board-tip {
 		margin: .45rem 0 1rem;
@@ -72,5 +90,9 @@ const twikooConfig = {
 		border-radius: .75rem;
 		background: color-mix(in oklab, var(--card-bg) 94%, var(--primary) 6%);
 	}
-	.poem-empty { opacity: .8; padding: .8rem; border: 1px dashed var(--line-divider); border-radius: .65rem; }
+	.activity-ending {
+		margin: 1rem 0 0;
+		font-weight: 600;
+		color: color-mix(in oklab, var(--text-normal) 82%, var(--primary) 18%);
+	}
 </style>
