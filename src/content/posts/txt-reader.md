@@ -1,43 +1,44 @@
 ---
-title: TXT Reader Integration
+title: TXT Reader 使用教程
 published: 2026-03-07
-description: A Markdown tutorial in English on how to embed and use the TXT Reader.
-tags: [TXT, Markdown, Reader]
+description: 这是一篇教程文章，教你如何在 Markdown 里嵌入 TXT 阅读器。
+tags: [TXT, Markdown, 教程]
 category: Notes
 draft: false
+permalink: txt-reader-guide
 ---
 
-This is an English Markdown tutorial for the TXT Reader integration.
+这是一篇**教程页**，用于说明 TXT Reader 的接入方式，不会自动跳转到阅读器页面。
 
-## What this feature does
+## 功能简介
 
-The TXT Reader lets you open and read `.txt` files directly inside a blog post.
+TXT Reader 可以让你在文章内直接阅读 `.txt` 文件，并提供行级渲染与关键词检索能力。
 
-## Basic syntax
+## 基础写法
 
-Use the custom tag below inside Markdown:
+在 Markdown 中使用自定义标签：
 
 ```html
-<txt src="/files/example.txt" title="TXT Demo" height="560"></txt>
+<txt src="/files/example.txt" title="示例文本" height="560"></txt>
 ```
 
-## Parameters
+## 参数说明
 
-- `src` (required): the public path to your txt file.
-- `title` (optional): displayed as the reader title.
-- `height` (optional): iframe height in pixels.
+- `src`（必填）：TXT 文件的公开路径。
+- `title`（可选）：阅读器显示标题。
+- `height`（可选）：嵌入高度，单位 px。
 
-## File placement
+## 文件放置位置
 
-Put txt files under `public/files/`.
+建议将文本文件放在 `public/files/` 下。
 
-Example mapping:
+例如：
 
-- Local file: `public/files/example.txt`
-- URL in markdown: `/files/example.txt`
+- 本地路径：`public/files/example.txt`
+- 引用地址：`/files/example.txt`
 
-## Notes
+## 使用建议
 
-- The reader supports large files and in-page keyword search.
-- Keep paths URL-safe (especially for spaces and special symbols).
-- If your file includes non-ASCII characters in the path, always use proper URL encoding when building links manually.
+- 阅读器支持大文本加载与站内检索。
+- 路径中如有空格、中文或特殊符号，请确保 URL 编码正确。
+- 如果只是发布教程，请链接到本页；如果要直接阅读，再单独使用 `/txt-reader.html?...` 链接。
