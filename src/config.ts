@@ -15,6 +15,7 @@ import type {
 	SiteConfig,
 } from "./types/config";
 import { LinkPreset } from "./types/config";
+import { MUTSUMI_LINK_MODE, MUTSUMI_LINK_URL } from "./constants/constants";
 
 // 移除i18n导入以避免循环依赖
 
@@ -288,7 +289,11 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "睦",
-					url: "/mu/",
+					url:
+						MUTSUMI_LINK_MODE === "external"
+							? MUTSUMI_LINK_URL
+							: "/mu/",
+					external: MUTSUMI_LINK_MODE === "external",
 					iconText: "睦",
 				},
 			],
