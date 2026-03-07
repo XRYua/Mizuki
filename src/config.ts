@@ -456,7 +456,7 @@ export const shareConfig: ShareConfig = {
 export const announcementConfig: AnnouncementConfig = {
 	title: "三行情书写", // 公告标题，填空使用i18n字符串Key.announcement
 	content:
-		"把想说的话写成三行，风会替你轻声读完。", // 公告内容
+		"三行情书写活动已开启，在活动文章评论区留下你的三行。", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接

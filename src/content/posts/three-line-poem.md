@@ -5,7 +5,6 @@ description: 愿每一封情，都能被温柔读到
 tags: [活动, 三行情书, 留言]
 category: Notes
 draft: false
-comment: false
 ---
 
 风起时，纸页会轻轻翻身。
@@ -17,19 +16,13 @@ comment: false
 
 ## 活动说明
 
-- 写下你的名字与邮箱标识；
-- 留下三行短句；
-- 与来访者互相点赞，让温柔被看见。
+- 活动采用站点评论系统进行互动；
+- 在本文底部评论区留下你的三行情书；
+- 也欢迎给喜欢的内容点赞与回复。
 
-## 三行情书写 · 活动场地
+## 参与方式
 
-（若网络较慢，活动卡片会稍后出现，请等待 1-2 秒。）
-
-<iframe
-  src="/three-line-poem-space/"
-  title="三行情书写活动场地"
-  loading="lazy"
-  style="width: 100%; height: 980px; border: 0; border-radius: 16px;"
-></iframe>
+请直接滚动到本文最下方评论区，
+以「三行」为一封，写下你的心事。
 
 愿每一封情，都能被温柔读到。
