@@ -319,6 +319,14 @@ const yearSuffix = isChinese ? "年" : " ";
 			}
 		});
 
+		dom.postsList.addEventListener("click", (e) => {
+			const postLink = e.target.closest("a[href]");
+			if (!postLink) return;
+			e.preventDefault();
+			e.stopPropagation();
+			window.location.href = postLink.href;
+		});
+
 		document.addEventListener("click", (e) => {
 			if (currentView === "day") return;
 			if (calendarRoot && !calendarRoot.contains(e.target)) {

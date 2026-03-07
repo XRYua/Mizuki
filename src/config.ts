@@ -454,14 +454,15 @@ export const shareConfig: ShareConfig = {
 };
 
 export const announcementConfig: AnnouncementConfig = {
-	title: "", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "ブログへようこそ！これはサンプルの告知です", // 公告内容
+	title: "三行情书写", // 公告标题，填空使用i18n字符串Key.announcement
+	content:
+		"把想说的话写成三行，风会替你轻声读完。", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
-		text: "Learn More", // 链接文本
-		url: "/about/", // 链接 URL
-		external: true, // 内部链接
+		text: "进入活动", // 链接文本
+		url: "/three-line-poem/", // 链接 URL
+		external: false, // 内部链接
 	},
 };
 
