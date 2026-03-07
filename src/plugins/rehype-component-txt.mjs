@@ -23,7 +23,8 @@ export function TxtViewerComponent(properties, children) {
 		);
 	}
 
-	const src = typeof properties?.src === "string" ? properties.src.trim() : "";
+	const src =
+		typeof properties?.src === "string" ? properties.src.trim() : "";
 	if (!src) {
 		return h(
 			"div",
@@ -41,9 +42,11 @@ export function TxtViewerComponent(properties, children) {
 			? properties.height.trim()
 			: "560";
 
+	const viewerUrl = `/txt-reader.html?src=${encodeURIComponent(src)}&title=${encodeURIComponent(title)}`;
+
 	return h("figure", { class: "embed-txt" }, [
 		h("iframe", {
-			src,
+			src: viewerUrl,
 			title,
 			loading: "lazy",
 			class: "embed-txt-frame",

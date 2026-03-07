@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TXT Reader</title>
+		<style>
+			:root {
+				color-scheme: light dark;
+			}
+			body {
+				margin: 0;
+				font-family:
+					ui-monospace, SFMono-Regular, Menlo, Consolas,
+					"Liberation Mono", monospace;
+				background: #0b0e14;
+				color: #e8ecf1;
+			}
+			header {
+				position: sticky;
+				top: 0;
+				z-index: 10;
+				padding: 12px 16px;
+				background: rgba(11, 14, 20, 0.92);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+				font-weight: 600;
+			}
+			main {
+				height: calc(100vh - 52px);
+				overflow: auto;
+				padding: 16px;
+			}
+			pre {
+				margin: 0;
+				white-space: pre-wrap;
+				word-break: break-word;
+				line-height: 1.65;
+			}
+			.loading,
+			.error {
+				font-family:
+					system-ui,
+					-apple-system,
+					sans-serif;
+			}
+			.error {
+				color: #ff9090;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="reader-title">TXT Reader</header>
+		<main>
+			<pre id="content" class="loading">Loading text...</pre>
+		</main>
+		<script>
+			const params = new URLSearchParams(window.location.search);
+			const src = params.get("src");
+			const title = params.get("title") || "TXT Reader";
+			const titleElement = document.getElementById("reader-title");
+			const contentElement = document.getElementById("content");
+			titleElement.textContent = title;
+
+			if (!src) {
+				contentElement.className = "error";
+				contentElement.textContent = "Missing src parameter.";
+			} else {
+				(async () => {
+					try {
+						const response = await fetch(src);
+						if (!response.ok || !response.body) {
+							throw new Error(
+								`Failed to load text file: ${response.status}`,
+							);
+						}
+
+						contentElement.className = "";
+						contentElement.textContent = "";
+
+						const reader = response.body.getReader();
+						const decoder = new TextDecoder("utf-8");
+						const queue = [];
+						let done = false;
+						let rendering = false;
+
+						const flush = () => {
+							if (rendering) return;
+							rendering = true;
+							requestAnimationFrame(() => {
+								let budget = 120000;
+								while (queue.length > 0 && budget > 0) {
+									const text = queue.shift();
+									contentElement.append(
+										document.createTextNode(text),
+									);
+									budget -= text.length;
+								}
+								rendering = false;
+								if (queue.length > 0) {
+									flush();
+								} else if (done) {
+									const remain = decoder.decode();
+									if (remain) {
+										contentElement.append(
+											document.createTextNode(remain),
+										);
+									}
+								}
+							});
+						};
+
+						while (true) {
+							const { value, done: streamDone } =
+								await reader.read();
+							if (streamDone) break;
+							queue.push(decoder.decode(value, { stream: true }));
+							flush();
+						}
+
+						done = true;
+						flush();
+					} catch (error) {
+						contentElement.className = "error";
+						contentElement.textContent =
+							error instanceof Error
+								? error.message
+								: "Unknown error";
+					}
+				})();
+			}
+		</script>
+	</body>
+</html>
