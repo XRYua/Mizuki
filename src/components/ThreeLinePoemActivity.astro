@@ -9,37 +9,97 @@ const twikooConfig = {
 ---
 
 <section class="three-line-poem-activity onload-animation">
+	<div class="activity-liquid activity-liquid-a"></div>
+	<div class="activity-liquid activity-liquid-b"></div>
+	<div class="activity-liquid activity-liquid-c"></div>
 	<div class="activity-orb activity-orb-left"></div>
 	<div class="activity-orb activity-orb-center"></div>
 	<div class="activity-orb activity-orb-right"></div>
 	<div class="activity-stars" aria-hidden="true"></div>
 
 	<header class="activity-header">
-		<p class="activity-eyebrow">三行情书写 · 沉浸留言场</p>
-		<h1>把今夜想说的话，写成三行。</h1>
+		<p class="activity-eyebrow">三行情书写 · 淡紫渐变蓝液态玻璃留言场</p>
+		<h1>把心动、想念和晚安，写成会发光的三行。</h1>
 		<p class="activity-lead">
-			你可以在这里写下一句给自己，一句给远方，一句给还没说出口的心事；
-			也可以把月色、晚风、想念与迟到的晚安，轻轻留在这面会发光的留言墙里。
+			这里不只是一个评论区，而是一面适合停下来、慢慢落笔的液态玻璃信笺墙。
+			你可以写一句给自己，一句给远方，一句给还没说出口的心事；也可以把月光、海风、想念与迟到的晚安，轻轻留在这里。
 		</p>
 		<p class="activity-subline">
-			愿每个路过的人，都能在别人的三行里，看见自己某一刻没有说完的情绪。
+			每一条留言都像一封短小却真诚的信，会被人读到、回应、点赞，也会在某个深夜，刚好治愈另一个人。
 		</p>
 	</header>
 
-	<div class="activity-note">
+	<div class="activity-floating-grid" aria-label="活动亮点">
+		<div class="floating-card">
+			<span class="floating-label">液态氛围</span>
+			<strong>淡紫、浅蓝、柔粉交叠成流动玻璃</strong>
+			<p>不是普通留言板，而是一块带雾感高光、漂浮倒影与夜色流光的沉浸式信笺场。</p>
+		</div>
+		<div class="floating-card">
+			<span class="floating-label">互动方式</span>
+			<strong>写下三行，也能点赞、回应、收藏此刻心情</strong>
+			<p>每一个来访者都可以留下自己的三行，也可以在别人的字句里找到共鸣与停留。</p>
+		</div>
+	</div>
+
+	<div class="activity-note glass-panel">
 		<p>
 			今夜把词句借给风吧：写一小段星光，写一口迟到的晚安，写一封没寄出的心事。
-			你不必写得盛大，三行就够；真诚落笔，已经很动人。
+			你不必写得盛大，三行就够；只要真诚落笔，这三行就会比长篇更动人。
 		</p>
 	</div>
 
-	<div class="activity-scene">
+	<div class="activity-tools glass-panel" aria-label="快速灵感工具">
+		<div class="tool-head">
+			<div>
+				<p class="tool-kicker">可以更好玩一点</p>
+				<h2>灵感切换 · 快速落笔 · 随机心动</h2>
+			</div>
+			<div class="tool-actions">
+				<button class="glass-button is-primary" type="button" data-action="random-idea">换一条灵感</button>
+				<button class="glass-button" type="button" data-action="scroll-comment">直接去留言</button>
+			</div>
+		</div>
+
+		<div class="mood-tabs" role="tablist" aria-label="三行情书主题切换">
+			<button class="mood-tab is-active" type="button" role="tab" aria-selected="true" data-mood="self">写给自己</button>
+			<button class="mood-tab" type="button" role="tab" aria-selected="false" data-mood="distance">写给远方</button>
+			<button class="mood-tab" type="button" role="tab" aria-selected="false" data-mood="secret">写给心事</button>
+		</div>
+
+		<div class="idea-stage">
+			<div class="idea-panel glass-mini-panel">
+				<p class="idea-label">当前主题</p>
+				<h3 id="idea-title">写给自己</h3>
+				<p id="idea-copy" class="idea-copy">把今天没有来得及说给自己的温柔补上：夸夸自己，抱抱自己，也允许自己慢一点。</p>
+			</div>
+			<div class="idea-panel glass-mini-panel">
+				<p class="idea-label">三行示范</p>
+				<p id="idea-poem" class="idea-poem">
+					今天也辛苦了，<br />
+					别急着变成很厉害的人，<br />
+					你先好好被自己喜欢。
+				</p>
+			</div>
+			<div class="idea-panel glass-mini-panel idea-panel-cta">
+				<p class="idea-label">落笔提示</p>
+				<ul class="idea-list">
+					<li>第一行写想说给谁</li>
+					<li>第二行写最真实的情绪</li>
+					<li>第三行写你想留下的回音</li>
+				</ul>
+				<button class="glass-button is-wide" type="button" data-action="focus-comment">我想立刻写</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="activity-scene glass-panel">
 		<div class="scene-quote scene-quote-left">“写给自己”</div>
 		<div class="scene-quote scene-quote-right">“写给远方”</div>
 		<div class="scene-line-grid" aria-label="三行情书灵感提示">
-			<span>今夜想对谁说一句晚安？</span>
-			<span>哪一句心事，你一直没寄出去？</span>
-			<span>如果只能写三行，你最想留下什么？</span>
+			<span>今夜你最想对谁说一句晚安？</span>
+			<span>哪一句想念，你已经在心里写了很多遍？</span>
+			<span>如果只能留下三行，你最想让谁记得你此刻的温柔？</span>
 		</div>
 	</div>
 
@@ -47,28 +107,100 @@ const twikooConfig = {
 		<div class="board-head">
 			<div class="board-heading">
 				<p class="board-kicker">匿名也温柔，署名也浪漫</p>
-				<h2 class="board-title">💌 三行情书留言墙</h2>
+				<h2 class="board-title">💌 三行情书液态留言墙</h2>
 				<p class="board-description">
-					使用昵称与邮箱标识后即可落笔，也可以给喜欢的字句点一个赞；
-					让每一段三行情书，都被认真看见、被温柔停留。
+					使用昵称与邮箱标识后即可落笔，也可以给喜欢的字句点一个赞、留下一句回应。
+					在这面淡紫渐变蓝的液态玻璃墙里，每一段三行情书都会被认真看见、被温柔停留，也许还会刚好击中另一个人的心。
 				</p>
+			</div>
+			<div class="board-pills" aria-label="活动特性">
+				<span>液态玻璃</span>
+				<span>三行短诗</span>
+				<span>公开互动</span>
 			</div>
 		</div>
 		<div class="board-shell">
 			<div class="board-shell-glow"></div>
 			<div class="board-shell-highlight"></div>
+			<div class="board-shell-blur"></div>
 			<div id="three-line-twikoo" class="twikoo-host"></div>
 		</div>
 	</div>
 
-	<footer class="activity-ending">
-		<p>愿每一封情书都不落空，愿每一个深夜写下的名字，最终都有回音。</p>
+	<footer class="activity-ending glass-panel">
+		<p>
+			愿每一封情书都不落空，愿每一个深夜写下的名字，最终都有回音；
+			愿你写下的三行，不只被看见，也被轻轻珍藏。
+		</p>
 	</footer>
 </section>
 
 <script is:inline src="/scroll-protection.js"></script>
 <script is:inline src="/assets/js/twikoo.all.min.js"></script>
 <script is:inline define:vars={{ twikooConfig }}>
+	const poemIdeas = {
+		self: {
+			title: "写给自己",
+			copy: "把今天没有来得及说给自己的温柔补上：夸夸自己，抱抱自己，也允许自己慢一点。",
+			poem: ["今天也辛苦了，", "别急着变成很厉害的人，", "你先好好被自己喜欢。"],
+		},
+		distance: {
+			title: "写给远方",
+			copy: "给那个暂时不在身边的人写三行风，把想念、牵挂和一句晚安一起寄出去。",
+			poem: ["风从你那边吹来时，", "我把没说完的话藏进夜里，", "等下一次见面再轻轻告诉你。"],
+		},
+		secret: {
+			title: "写给心事",
+			copy: "如果有一句话一直停在心口，就让它先在这里落地；哪怕不署名，也可以很真诚。",
+			poem: ["有些喜欢不必声张，", "它安静地亮在每一个深夜里，", "像月光替我说过一次想你。"],
+		},
+	};
+
+	function renderIdea(moodKey) {
+		const idea = poemIdeas[moodKey];
+		const titleEl = document.getElementById("idea-title");
+		const copyEl = document.getElementById("idea-copy");
+		const poemEl = document.getElementById("idea-poem");
+		if (!idea || !titleEl || !copyEl || !poemEl) return;
+		titleEl.textContent = idea.title;
+		copyEl.textContent = idea.copy;
+		poemEl.innerHTML = idea.poem.join("<br />");
+		document.querySelectorAll(".mood-tab").forEach((tab) => {
+			const isActive = tab.getAttribute("data-mood") === moodKey;
+			tab.classList.toggle("is-active", isActive);
+			tab.setAttribute("aria-selected", isActive ? "true" : "false");
+		});
+	}
+
+	function bindPoemInteractions() {
+		document.querySelectorAll(".mood-tab").forEach((tab) => {
+			tab.addEventListener("click", () => {
+				renderIdea(tab.getAttribute("data-mood") || "self");
+			});
+		});
+
+		document.querySelectorAll("[data-action='random-idea']").forEach((button) => {
+			button.addEventListener("click", () => {
+				const keys = Object.keys(poemIdeas);
+				const nextKey = keys[Math.floor(Math.random() * keys.length)];
+				renderIdea(nextKey);
+			});
+		});
+
+		const scrollToComment = () => {
+			document.getElementById("three-line-twikoo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+		};
+
+		document.querySelectorAll("[data-action='scroll-comment'], [data-action='focus-comment']").forEach((button) => {
+			button.addEventListener("click", () => {
+				scrollToComment();
+				setTimeout(() => {
+					document.querySelector("#three-line-twikoo textarea, #three-line-twikoo .el-textarea__inner")?.focus();
+				}, 450);
+			});
+		});
+	}
+
 	function initThreeLineTwikoo() {
 		if (typeof twikoo === "undefined") {
 			setTimeout(initThreeLineTwikoo, 400);
@@ -89,10 +221,16 @@ const twikooConfig = {
 			});
 	}
 
-	document.addEventListener("DOMContentLoaded", initThreeLineTwikoo);
+	function initThreeLinePoemPage() {
+		renderIdea("self");
+		bindPoemInteractions();
+		initThreeLineTwikoo();
+	}
+
+	document.addEventListener("DOMContentLoaded", initThreeLinePoemPage);
 	if (window.swup?.hooks) {
 		window.swup.hooks.on("content:replace", () => {
-			setTimeout(initThreeLineTwikoo, 200);
+			setTimeout(initThreeLinePoemPage, 200);
 		});
 	}
 </script>
@@ -102,30 +240,64 @@ const twikooConfig = {
 		position: relative;
 		overflow: hidden;
 		padding: clamp(1.2rem, 2vw, 2rem);
-		border: 1px solid rgba(196, 181, 253, 0.28);
+		border: 1px solid rgba(216, 180, 254, 0.26);
 		border-radius: 2rem;
 		background:
-			radial-gradient(circle at top left, rgba(167, 139, 250, 0.34) 0, transparent 34%),
-			radial-gradient(circle at 80% 10%, rgba(244, 114, 182, 0.22) 0, transparent 24%),
-			radial-gradient(circle at 50% 100%, rgba(125, 211, 252, 0.14) 0, transparent 34%),
-			linear-gradient(145deg, rgba(76, 29, 149, 0.42) 0%, rgba(91, 33, 182, 0.28) 32%, rgba(139, 92, 246, 0.18) 58%, rgba(255, 255, 255, 0.12) 100%);
+			radial-gradient(circle at top left, rgba(196, 181, 253, 0.34) 0, transparent 28%),
+			radial-gradient(circle at 88% 12%, rgba(125, 211, 252, 0.24) 0, transparent 24%),
+			radial-gradient(circle at 50% 100%, rgba(244, 114, 182, 0.18) 0, transparent 30%),
+			linear-gradient(145deg, rgba(103, 80, 164, 0.34) 0%, rgba(102, 126, 234, 0.22) 30%, rgba(118, 75, 162, 0.18) 58%, rgba(255, 255, 255, 0.12) 100%);
 		box-shadow:
-			0 32px 80px rgba(49, 24, 91, 0.28),
-			inset 0 1px 0 rgba(255, 255, 255, 0.22),
-			inset 0 -1px 0 rgba(196, 181, 253, 0.18);
-		backdrop-filter: blur(22px) saturate(140%);
+			0 36px 90px rgba(56, 34, 110, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.26),
+			inset 0 -1px 0 rgba(191, 219, 254, 0.14);
+		backdrop-filter: blur(26px) saturate(150%);
 		isolation: isolate;
+	}
+
+	.activity-liquid {
+		position: absolute;
+		z-index: -1;
+		border-radius: 999px;
+		filter: blur(12px);
+		opacity: 0.9;
+	}
+
+	.activity-liquid-a {
+		width: 18rem;
+		height: 8rem;
+		top: 8%;
+		right: -4rem;
+		background: linear-gradient(135deg, rgba(196, 181, 253, 0.42), rgba(125, 211, 252, 0.18));
+		transform: rotate(-12deg);
+	}
+
+	.activity-liquid-b {
+		width: 15rem;
+		height: 7rem;
+		bottom: 12%;
+		left: -3rem;
+		background: linear-gradient(135deg, rgba(125, 211, 252, 0.26), rgba(244, 114, 182, 0.18));
+		transform: rotate(10deg);
+	}
+
+	.activity-liquid-c {
+		width: 10rem;
+		height: 10rem;
+		top: 35%;
+		right: 18%;
+		background: radial-gradient(circle, rgba(255, 255, 255, 0.26), rgba(196, 181, 253, 0.16), transparent 68%);
 	}
 
 	.activity-stars {
 		position: absolute;
 		inset: 0;
 		background-image:
-			radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.8) 0 2px, transparent 2.5px),
-			radial-gradient(circle at 74% 18%, rgba(255, 255, 255, 0.65) 0 1.5px, transparent 2px),
-			radial-gradient(circle at 82% 36%, rgba(255, 255, 255, 0.5) 0 1.5px, transparent 2px),
+			radial-gradient(circle at 16% 20%, rgba(255, 255, 255, 0.82) 0 2px, transparent 2.5px),
+			radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.68) 0 1.5px, transparent 2px),
+			radial-gradient(circle at 82% 42%, rgba(191, 219, 254, 0.48) 0 1.5px, transparent 2px),
 			radial-gradient(circle at 34% 78%, rgba(255, 255, 255, 0.42) 0 1.5px, transparent 2px);
-		opacity: 0.8;
+		opacity: 0.86;
 		pointer-events: none;
 	}
 
@@ -133,8 +305,8 @@ const twikooConfig = {
 		position: absolute;
 		z-index: -1;
 		border-radius: 999px;
-		filter: blur(14px);
-		opacity: 0.75;
+		filter: blur(18px);
+		opacity: 0.78;
 	}
 
 	.activity-orb-left {
@@ -142,24 +314,34 @@ const twikooConfig = {
 		height: 12rem;
 		top: -4rem;
 		left: -3rem;
-		background: color-mix(in oklab, var(--primary) 28%, transparent);
+		background: rgba(167, 139, 250, 0.28);
 	}
 
 	.activity-orb-center {
-		width: 14rem;
-		height: 14rem;
-		top: 28%;
-		left: 46%;
+		width: 16rem;
+		height: 16rem;
+		top: 26%;
+		left: 48%;
 		transform: translate(-50%, -50%);
-		background: color-mix(in oklab, #f9a8d4 18%, transparent);
+		background: rgba(125, 211, 252, 0.14);
 	}
 
 	.activity-orb-right {
-		width: 11rem;
-		height: 11rem;
+		width: 12rem;
+		height: 12rem;
 		bottom: 1rem;
 		right: -2rem;
-		background: color-mix(in oklab, #60a5fa 18%, transparent);
+		background: rgba(244, 114, 182, 0.18);
+	}
+
+	.glass-panel,
+	.glass-mini-panel {
+		border: 1px solid rgba(216, 180, 254, 0.2);
+		background: linear-gradient(135deg, rgba(139, 92, 246, 0.14), rgba(125, 211, 252, 0.08), rgba(255, 255, 255, 0.08));
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.2),
+			0 24px 46px rgba(56, 34, 110, 0.16);
+		backdrop-filter: blur(18px) saturate(145%);
 	}
 
 	.activity-header {
@@ -171,68 +353,234 @@ const twikooConfig = {
 		display: inline-flex;
 		align-items: center;
 		margin: 0;
-		padding: 0.42rem 0.78rem;
-		border: 1px solid rgba(196, 181, 253, 0.34);
+		padding: 0.44rem 0.82rem;
+		border: 1px solid rgba(216, 180, 254, 0.28);
 		border-radius: 999px;
-		background: linear-gradient(135deg, rgba(109, 40, 217, 0.28), rgba(255, 255, 255, 0.08));
-		color: color-mix(in oklab, white 22%, var(--primary) 78%);
+		background: linear-gradient(135deg, rgba(167, 139, 250, 0.22), rgba(125, 211, 252, 0.12));
+		color: color-mix(in oklab, white 20%, var(--primary) 80%);
 		font-size: 0.82rem;
 		font-weight: 800;
 		letter-spacing: 0.08em;
-		backdrop-filter: blur(8px);
+		backdrop-filter: blur(10px);
 	}
 
 	.activity-header h1 {
-		margin: 0.9rem 0 0.7rem;
-		font-size: clamp(2rem, 5vw, 3.6rem);
-		line-height: 1.08;
+		margin: 0.9rem 0 0.78rem;
+		font-size: clamp(2.2rem, 5vw, 4rem);
+		line-height: 1.03;
 		letter-spacing: 0.04em;
-		text-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+		text-shadow: 0 12px 32px rgba(40, 21, 94, 0.18);
 	}
 
 	.activity-lead,
 	.activity-subline {
-		max-width: 56rem;
+		max-width: 60rem;
 		margin: 0;
-		line-height: 1.95;
-		font-size: 1rem;
-		color: color-mix(in oklab, var(--text-normal) 90%, white 10%);
+		line-height: 2;
+		font-size: 1.02rem;
+		color: color-mix(in oklab, var(--text-normal) 92%, white 8%);
 	}
 
 	.activity-subline {
-		margin-top: 0.65rem;
-		color: color-mix(in oklab, var(--text-normal) 72%, var(--primary) 28%);
+		margin-top: 0.72rem;
+		color: color-mix(in oklab, var(--text-normal) 72%, rgb(147 197 253) 28%);
 	}
 
-	.activity-note {
+	.activity-floating-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.95rem;
+		margin-top: 1.15rem;
+	}
+
+	.floating-card {
+		padding: 1rem 1.05rem;
+		border-radius: 1.35rem;
+		border: 1px solid rgba(216, 180, 254, 0.18);
+		background: linear-gradient(135deg, rgba(147, 197, 253, 0.12), rgba(167, 139, 250, 0.14), rgba(255, 255, 255, 0.08));
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.2),
+			0 24px 42px rgba(56, 34, 110, 0.16);
+		backdrop-filter: blur(16px) saturate(135%);
+	}
+
+	.floating-label {
+		display: inline-flex;
+		margin-bottom: 0.5rem;
+		font-size: 0.74rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: color-mix(in oklab, rgb(191 219 254) 40%, var(--primary) 60%);
+	}
+
+	.floating-card strong {
+		display: block;
+		font-size: 1.03rem;
+		line-height: 1.7;
+	}
+
+	.floating-card p {
+		margin: 0.55rem 0 0;
+		line-height: 1.85;
+		opacity: 0.9;
+	}
+
+	.activity-note,
+	.activity-tools,
+	.activity-scene,
+	.activity-ending {
 		position: relative;
 		margin-top: 1.2rem;
-		padding: 1rem 1.1rem;
-		border: 1px solid rgba(196, 181, 253, 0.22);
-		border-radius: 1.25rem;
-		background: linear-gradient(135deg, rgba(109, 40, 217, 0.18), rgba(255, 255, 255, 0.08));
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.28),
-			0 20px 40px rgba(49, 24, 91, 0.16);
-		backdrop-filter: blur(14px) saturate(125%);
+		padding: 1.05rem 1.15rem;
+		border-radius: 1.4rem;
 	}
 
-	.activity-note p {
+	.activity-note p,
+	.activity-ending p {
 		margin: 0;
+		line-height: 1.95;
+		font-size: 1rem;
+	}
+
+	.tool-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.tool-kicker {
+		margin: 0;
+		font-size: 0.76rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		font-weight: 800;
+		color: color-mix(in oklab, rgb(191 219 254) 40%, var(--primary) 60%);
+	}
+
+	.tool-head h2 {
+		margin: 0.38rem 0 0;
+		font-size: clamp(1.25rem, 2vw, 1.8rem);
+	}
+
+	.tool-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	.glass-button {
+		appearance: none;
+		border: 1px solid rgba(216, 180, 254, 0.24);
+		border-radius: 999px;
+		padding: 0.72rem 1.05rem;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(167, 139, 250, 0.12));
+		color: var(--text-normal);
+		font: inherit;
+		font-weight: 700;
+		cursor: pointer;
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.18),
+			0 12px 24px rgba(56, 34, 110, 0.14);
+		transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	}
+
+	.glass-button:hover {
+		transform: translateY(-2px);
+		border-color: rgba(191, 219, 254, 0.3);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.24),
+			0 16px 28px rgba(56, 34, 110, 0.18);
+	}
+
+	.glass-button.is-primary,
+	.glass-button.is-wide,
+	.twikoo-host :global(.el-button--primary),
+	.twikoo-host :global(.tk-submit-action-icon.__submit),
+	.twikoo-host :global(.tk-preview) {
+		background: linear-gradient(135deg, rgba(147, 197, 253, 0.85), rgba(167, 139, 250, 0.95), rgba(244, 114, 182, 0.8)) !important;
+		color: white !important;
+	}
+
+	.glass-button.is-wide {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.mood-tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem;
+		margin-top: 1rem;
+	}
+
+	.mood-tab {
+		appearance: none;
+		border: 1px solid rgba(216, 180, 254, 0.2);
+		border-radius: 999px;
+		padding: 0.68rem 0.95rem;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(167, 139, 250, 0.1));
+		color: var(--text-normal);
+		font: inherit;
+		font-weight: 700;
+		cursor: pointer;
+		transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+	}
+
+	.mood-tab.is-active {
+		border-color: rgba(191, 219, 254, 0.28);
+		background: linear-gradient(135deg, rgba(125, 211, 252, 0.24), rgba(167, 139, 250, 0.22));
+		transform: translateY(-1px);
+	}
+
+	.idea-stage {
+		display: grid;
+		grid-template-columns: 1.05fr 1.1fr 0.9fr;
+		gap: 0.9rem;
+		margin-top: 1rem;
+	}
+
+	.idea-panel {
+		padding: 1rem;
+		border-radius: 1.2rem;
+	}
+
+	.idea-label {
+		margin: 0;
+		font-size: 0.74rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		font-weight: 800;
+		color: color-mix(in oklab, rgb(191 219 254) 38%, var(--primary) 62%);
+	}
+
+	.idea-panel h3 {
+		margin: 0.55rem 0 0;
+		font-size: 1.2rem;
+	}
+
+	.idea-copy,
+	.idea-poem {
+		margin: 0.7rem 0 0;
 		line-height: 1.9;
-		font-size: 0.98rem;
+	}
+
+	.idea-poem {
+		font-size: 1rem;
+		font-weight: 600;
+		color: color-mix(in oklab, var(--text-normal) 74%, rgb(191 219 254) 26%);
+	}
+
+	.idea-list {
+		margin: 0.75rem 0 1rem;
+		padding-left: 1.1rem;
+		line-height: 1.85;
 	}
 
 	.activity-scene {
-		position: relative;
 		display: grid;
 		gap: 0.85rem;
-		margin-top: 1.15rem;
-		padding: 1.05rem;
-		border: 1px solid rgba(196, 181, 253, 0.22);
-		border-radius: 1.4rem;
-		background: linear-gradient(135deg, rgba(76, 29, 149, 0.22), rgba(255, 255, 255, 0.08));
-		backdrop-filter: blur(14px) saturate(125%);
 	}
 
 	.scene-line-grid {
@@ -242,13 +590,14 @@ const twikooConfig = {
 	}
 
 	.scene-line-grid span,
-	.scene-quote {
+	.scene-quote,
+	.board-pills span {
 		padding: 0.8rem 0.95rem;
 		border-radius: 1rem;
-		background: linear-gradient(135deg, rgba(109, 40, 217, 0.18), rgba(255, 255, 255, 0.1));
-		border: 1px solid rgba(216, 180, 254, 0.22);
+		background: linear-gradient(135deg, rgba(167, 139, 250, 0.16), rgba(125, 211, 252, 0.12), rgba(255, 255, 255, 0.08));
+		border: 1px solid rgba(216, 180, 254, 0.18);
 		line-height: 1.75;
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 	}
 
 	.scene-quote {
@@ -264,10 +613,14 @@ const twikooConfig = {
 
 	.activity-board {
 		position: relative;
-		margin-top: 1.25rem;
+		margin-top: 1.3rem;
 	}
 
 	.board-head {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
 		margin-bottom: 1rem;
 	}
 
@@ -280,38 +633,51 @@ const twikooConfig = {
 		font-size: 0.82rem;
 		font-weight: 800;
 		letter-spacing: 0.12em;
-		color: color-mix(in oklab, var(--text-normal) 65%, var(--primary) 35%);
+		color: color-mix(in oklab, rgb(191 219 254) 36%, var(--primary) 64%);
 	}
 
 	.board-title {
 		margin: 0.5rem 0 0;
-		font-size: clamp(1.4rem, 2vw, 2rem);
+		font-size: clamp(1.5rem, 2vw, 2.1rem);
 		font-weight: 800;
 	}
 
 	.board-description {
-		max-width: 48rem;
-		margin: 0.65rem 0 0;
-		line-height: 1.9;
-		color: color-mix(in oklab, var(--text-normal) 82%, white 18%);
+		max-width: 52rem;
+		margin: 0.68rem 0 0;
+		line-height: 1.95;
+		color: color-mix(in oklab, var(--text-normal) 84%, white 16%);
+	}
+
+	.board-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem;
+	}
+
+	.board-pills span {
+		padding-inline: 0.9rem;
+		white-space: nowrap;
+		font-size: 0.9rem;
 	}
 
 	.board-shell {
 		position: relative;
-		padding: clamp(0.95rem, 1.6vw, 1.25rem);
-		border: 1px solid rgba(196, 181, 253, 0.28);
-		border-radius: 1.8rem;
+		padding: clamp(1rem, 1.8vw, 1.35rem);
+		border: 1px solid rgba(191, 219, 254, 0.2);
+		border-radius: 1.9rem;
 		background:
-			linear-gradient(180deg, rgba(88, 28, 135, 0.34), rgba(255, 255, 255, 0.1)),
-			radial-gradient(circle at top, rgba(167, 139, 250, 0.22), transparent 58%);
+			linear-gradient(180deg, rgba(147, 197, 253, 0.16), rgba(167, 139, 250, 0.2), rgba(255, 255, 255, 0.08)),
+			radial-gradient(circle at top, rgba(255, 255, 255, 0.2), transparent 62%);
 		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.22),
-			0 28px 60px rgba(49, 24, 91, 0.24);
-		backdrop-filter: blur(18px) saturate(135%);
+			inset 0 1px 0 rgba(255, 255, 255, 0.2),
+			0 30px 70px rgba(56, 34, 110, 0.22);
+		backdrop-filter: blur(22px) saturate(155%);
 	}
 
 	.board-shell-glow,
-	.board-shell-highlight {
+	.board-shell-highlight,
+	.board-shell-blur {
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
@@ -319,7 +685,7 @@ const twikooConfig = {
 	}
 
 	.board-shell-glow {
-		background: linear-gradient(135deg, rgba(139, 92, 246, 0.24), transparent 35%, rgba(244, 114, 182, 0.18));
+		background: linear-gradient(135deg, rgba(191, 219, 254, 0.18), transparent 35%, rgba(244, 114, 182, 0.15));
 	}
 
 	.board-shell-highlight {
@@ -327,17 +693,25 @@ const twikooConfig = {
 		background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.02) 26%, transparent 46%);
 	}
 
+	.board-shell-blur {
+		inset: auto 8% 8% auto;
+		width: 10rem;
+		height: 10rem;
+		background: radial-gradient(circle, rgba(125, 211, 252, 0.14), transparent 70%);
+		filter: blur(8px);
+	}
+
 	.twikoo-host {
 		position: relative;
-		padding: 0.45rem;
-		border-radius: 1.25rem;
-		background: linear-gradient(180deg, rgba(91, 33, 182, 0.18), rgba(255, 255, 255, 0.08));
+		padding: 0.5rem;
+		border-radius: 1.3rem;
+		background: linear-gradient(180deg, rgba(147, 197, 253, 0.1), rgba(167, 139, 250, 0.14), rgba(255, 255, 255, 0.06));
 	}
 
 	.twikoo-host :global(.tk-comments-container) {
 		margin-top: 1.2rem;
 		padding-top: 1.1rem;
-		border-top: 1px solid color-mix(in oklab, var(--primary) 12%, transparent);
+		border-top: 1px solid rgba(216, 180, 254, 0.18);
 	}
 
 	.twikoo-host :global(.tk-comments-title) {
@@ -346,18 +720,18 @@ const twikooConfig = {
 
 	.twikoo-host :global(.tk-submit) {
 		padding: 1rem;
-		border: 1px solid rgba(196, 181, 253, 0.18);
-		border-radius: 1.2rem;
-		background: linear-gradient(180deg, rgba(76, 29, 149, 0.16), rgba(255, 255, 255, 0.16));
+		border: 1px solid rgba(216, 180, 254, 0.18);
+		border-radius: 1.25rem;
+		background: linear-gradient(180deg, rgba(125, 211, 252, 0.1), rgba(167, 139, 250, 0.14), rgba(255, 255, 255, 0.1));
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.22),
-			0 16px 35px rgba(49, 24, 91, 0.12);
+			0 18px 38px rgba(56, 34, 110, 0.12);
 	}
 
 	.twikoo-host :global(.tk-row.actions) {
 		margin-top: 0.95rem;
 		padding-top: 0.95rem;
-		border-top: 1px dashed color-mix(in oklab, var(--primary) 16%, transparent);
+		border-top: 1px dashed rgba(216, 180, 254, 0.2);
 	}
 
 	.twikoo-host :global(.tk-meta-input) {
@@ -373,8 +747,8 @@ const twikooConfig = {
 	.twikoo-host :global(.el-input__inner),
 	.twikoo-host :global(.el-textarea__inner) {
 		border-radius: 1rem !important;
-		border-color: rgba(196, 181, 253, 0.22) !important;
-		background: rgba(255, 255, 255, 0.82) !important;
+		border-color: rgba(191, 219, 254, 0.18) !important;
+		background: rgba(255, 255, 255, 0.8) !important;
 		box-shadow: none !important;
 		transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 	}
@@ -387,17 +761,17 @@ const twikooConfig = {
 	.twikoo-host :global(.tk-input:focus),
 	.twikoo-host :global(.el-input__inner:focus),
 	.twikoo-host :global(.el-textarea__inner:focus) {
-		border-color: color-mix(in oklab, var(--primary) 52%, transparent) !important;
-		box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 12%, transparent) !important;
+		border-color: rgba(147, 197, 253, 0.38) !important;
+		box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12) !important;
 		transform: translateY(-1px);
 	}
 
 	.twikoo-host :global(.tk-preview-container),
 	.twikoo-host :global(.tk-comment) {
-		border: 1px solid rgba(196, 181, 253, 0.18);
+		border: 1px solid rgba(216, 180, 254, 0.16);
 		border-radius: 1.15rem;
-		background: linear-gradient(180deg, rgba(76, 29, 149, 0.14), rgba(255, 255, 255, 0.14));
-		box-shadow: 0 18px 36px rgba(49, 24, 91, 0.12);
+		background: linear-gradient(180deg, rgba(147, 197, 253, 0.1), rgba(167, 139, 250, 0.12), rgba(255, 255, 255, 0.1));
+		box-shadow: 0 18px 36px rgba(56, 34, 110, 0.12);
 	}
 
 	.twikoo-host :global(.tk-comment) {
@@ -406,62 +780,50 @@ const twikooConfig = {
 	}
 
 	.twikoo-host :global(.tk-comment .tk-content) {
-		line-height: 1.9;
-		font-size: 0.98rem;
+		line-height: 1.92;
+		font-size: 0.99rem;
 	}
 
 	.twikoo-host :global(.tk-tag),
 	.twikoo-host :global(.tk-action-icon),
 	.twikoo-host :global(.tk-comments-title > span),
 	.twikoo-host :global(.tk-icon.__comments) {
-		color: color-mix(in oklab, var(--text-normal) 78%, var(--primary) 22%);
+		color: color-mix(in oklab, rgb(191 219 254) 24%, var(--text-normal) 76%);
 	}
 
 	.twikoo-host :global(.tk-extras),
 	.twikoo-host :global(.tk-meta) {
-		opacity: 0.82;
+		opacity: 0.84;
 	}
 
 	.twikoo-host :global(.el-button),
 	.twikoo-host :global(.tk-submit-action-icon.__submit),
 	.twikoo-host :global(.tk-preview) {
 		border-radius: 999px !important;
-	}
-
-	.twikoo-host :global(.el-button--primary),
-	.twikoo-host :global(.tk-submit-action-icon.__submit),
-	.twikoo-host :global(.tk-preview) {
 		border: none !important;
-		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 88%, white 12%), color-mix(in oklab, var(--primary) 62%, #f472b6 38%)) !important;
-		box-shadow: 0 14px 28px color-mix(in oklab, var(--primary) 20%, transparent);
+		box-shadow: 0 16px 30px rgba(56, 34, 110, 0.18);
 	}
 
 	.twikoo-host :global(.tk-replies) {
 		margin-top: 0.85rem;
 		padding-left: 0.8rem;
-		border-left: 1px solid color-mix(in oklab, var(--primary) 12%, transparent);
+		border-left: 1px solid rgba(216, 180, 254, 0.16);
 	}
 
 	.twikoo-host :global(.tk-replies .tk-comment) {
-		background: linear-gradient(180deg, rgba(109, 40, 217, 0.12), rgba(255, 255, 255, 0.12));
+		background: linear-gradient(180deg, rgba(125, 211, 252, 0.1), rgba(167, 139, 250, 0.1), rgba(255, 255, 255, 0.08));
 	}
 
-	.activity-ending {
-		margin-top: 1.2rem;
-		padding-top: 0.25rem;
-		text-align: center;
-	}
-
-	.activity-ending p {
-		margin: 0;
-		line-height: 1.85;
-		font-weight: 600;
-		color: color-mix(in oklab, var(--text-normal) 75%, var(--primary) 25%);
-	}
-
-	@media (max-width: 900px) {
-		.scene-line-grid {
+	@media (max-width: 980px) {
+		.activity-floating-grid,
+		.idea-stage {
 			grid-template-columns: 1fr;
+		}
+
+		.board-head,
+		.tool-head {
+			flex-direction: column;
+			align-items: flex-start;
 		}
 	}
 
@@ -472,24 +834,43 @@ const twikooConfig = {
 		}
 
 		.activity-header h1 {
-			font-size: clamp(1.8rem, 10vw, 2.6rem);
+			font-size: clamp(1.95rem, 10vw, 2.9rem);
 		}
 
 		.activity-lead,
 		.activity-subline,
-		.board-description,
 		.activity-note p,
-		.scene-line-grid span {
+		.board-description,
+		.floating-card p,
+		.idea-copy,
+		.idea-poem,
+		.scene-line-grid span,
+		.activity-ending p {
 			font-size: 0.96rem;
+		}
+
+		.scene-line-grid {
+			grid-template-columns: 1fr;
 		}
 
 		.scene-quote-right {
 			justify-self: start;
 		}
 
+		.tool-actions,
+		.board-pills {
+			width: 100%;
+		}
+
+		.glass-button,
+		.mood-tab {
+			width: 100%;
+			justify-content: center;
+		}
+
 		.board-shell {
 			padding: 0.8rem;
-			border-radius: 1.35rem;
+			border-radius: 1.45rem;
 		}
 	}
 </style>
