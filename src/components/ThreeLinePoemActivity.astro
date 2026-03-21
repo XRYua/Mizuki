@@ -123,6 +123,21 @@ const twikooConfig = {
 			<div class="board-shell-glow"></div>
 			<div class="board-shell-highlight"></div>
 			<div class="board-shell-blur"></div>
+			<div class="comment-helper glass-mini-panel">
+				<div class="comment-helper-head">
+					<div>
+						<p class="idea-label">快捷写作</p>
+						<h3>一键插入更好写</h3>
+					</div>
+					<button class="glass-button" type="button" data-action="focus-comment">展开输入框</button>
+				</div>
+				<div class="comment-helper-pills">
+					<button class="helper-pill" type="button" data-insert-template="开头">想把今天的心情写给你，</button>
+					<button class="helper-pill" type="button" data-insert-template="晚安">今晚的月色很安静，</button>
+					<button class="helper-pill" type="button" data-insert-template="想念">原来想念也会发光，</button>
+					<button class="helper-pill" type="button" data-insert-template="结尾">愿你读到时，刚好温柔。</button>
+				</div>
+			</div>
 			<div id="three-line-twikoo" class="twikoo-host"></div>
 		</div>
 	</div>
@@ -138,6 +153,13 @@ const twikooConfig = {
 <script is:inline src="/scroll-protection.js"></script>
 <script is:inline src="/assets/js/twikoo.all.min.js"></script>
 <script is:inline define:vars={{ twikooConfig }}>
+	const commentTemplates = {
+		开头: "想把今天的心情写给你，\n这里是第一行。\n这里是第二行。\n这里是第三行。",
+		晚安: "今晚的月色很安静，\n我想把迟到的晚安送给你，\n也把温柔留在这里。",
+		想念: "原来想念也会发光，\n它在每一个没说出口的夜里，\n替我慢慢靠近你。",
+		结尾: "愿你读到时，刚好温柔。",
+	};
+
 	const poemIdeas = {
 		self: {
 			title: "写给自己",
@@ -172,6 +194,20 @@ const twikooConfig = {
 		});
 	}
 
+	function insertTemplateToComment(templateKey) {
+		const template = commentTemplates[templateKey];
+		if (!template) return;
+		const textarea = document.querySelector("#three-line-twikoo textarea, #three-line-twikoo .el-textarea__inner");
+		if (!textarea) {
+			document.getElementById("three-line-twikoo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+			return;
+		}
+		const currentValue = textarea.value || "";
+		textarea.value = currentValue ? `${currentValue}\n${template}` : template;
+		textarea.dispatchEvent(new Event("input", { bubbles: true }));
+		textarea.focus();
+	}
+
 	function bindPoemInteractions() {
 		document.querySelectorAll(".mood-tab").forEach((tab) => {
 			tab.addEventListener("click", () => {
@@ -197,6 +233,13 @@ const twikooConfig = {
 				setTimeout(() => {
 					document.querySelector("#three-line-twikoo textarea, #three-line-twikoo .el-textarea__inner")?.focus();
 				}, 450);
+			});
+		});
+
+		document.querySelectorAll("[data-insert-template]").forEach((button) => {
+			button.addEventListener("click", () => {
+				document.getElementById("three-line-twikoo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+				setTimeout(() => insertTemplateToComment(button.getAttribute("data-insert-template") || "开头"), 420);
 			});
 		});
 	}
@@ -240,18 +283,18 @@ const twikooConfig = {
 		position: relative;
 		overflow: hidden;
 		padding: clamp(1.2rem, 2vw, 2rem);
-		border: 1px solid rgba(216, 180, 254, 0.26);
+		border: 1px solid rgba(216, 180, 254, 0.16);
 		border-radius: 2rem;
 		background:
-			radial-gradient(circle at top left, rgba(196, 181, 253, 0.34) 0, transparent 28%),
-			radial-gradient(circle at 88% 12%, rgba(125, 211, 252, 0.24) 0, transparent 24%),
-			radial-gradient(circle at 50% 100%, rgba(244, 114, 182, 0.18) 0, transparent 30%),
-			linear-gradient(145deg, rgba(103, 80, 164, 0.34) 0%, rgba(102, 126, 234, 0.22) 30%, rgba(118, 75, 162, 0.18) 58%, rgba(255, 255, 255, 0.12) 100%);
+			radial-gradient(circle at top left, rgba(196, 181, 253, 0.2) 0, transparent 26%),
+			radial-gradient(circle at 88% 12%, rgba(125, 211, 252, 0.16) 0, transparent 22%),
+			radial-gradient(circle at 50% 100%, rgba(244, 114, 182, 0.12) 0, transparent 28%),
+			linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, rgba(196, 181, 253, 0.14) 34%, rgba(125, 211, 252, 0.12) 62%, rgba(255, 255, 255, 0.22) 100%);
 		box-shadow:
-			0 36px 90px rgba(56, 34, 110, 0.3),
-			inset 0 1px 0 rgba(255, 255, 255, 0.26),
+			0 36px 90px rgba(56, 34, 110, 0.16),
+			inset 0 1px 0 rgba(255, 255, 255, 0.42),
 			inset 0 -1px 0 rgba(191, 219, 254, 0.14);
-		backdrop-filter: blur(26px) saturate(150%);
+		backdrop-filter: blur(24px) saturate(135%);
 		isolation: isolate;
 	}
 
@@ -268,7 +311,7 @@ const twikooConfig = {
 		height: 8rem;
 		top: 8%;
 		right: -4rem;
-		background: linear-gradient(135deg, rgba(196, 181, 253, 0.42), rgba(125, 211, 252, 0.18));
+		background: linear-gradient(135deg, rgba(196, 181, 253, 0.26), rgba(125, 211, 252, 0.1));
 		transform: rotate(-12deg);
 	}
 
@@ -277,7 +320,7 @@ const twikooConfig = {
 		height: 7rem;
 		bottom: 12%;
 		left: -3rem;
-		background: linear-gradient(135deg, rgba(125, 211, 252, 0.26), rgba(244, 114, 182, 0.18));
+		background: linear-gradient(135deg, rgba(125, 211, 252, 0.16), rgba(244, 114, 182, 0.1));
 		transform: rotate(10deg);
 	}
 
@@ -286,7 +329,7 @@ const twikooConfig = {
 		height: 10rem;
 		top: 35%;
 		right: 18%;
-		background: radial-gradient(circle, rgba(255, 255, 255, 0.26), rgba(196, 181, 253, 0.16), transparent 68%);
+		background: radial-gradient(circle, rgba(255, 255, 255, 0.22), rgba(196, 181, 253, 0.1), transparent 68%);
 	}
 
 	.activity-stars {
@@ -336,12 +379,12 @@ const twikooConfig = {
 
 	.glass-panel,
 	.glass-mini-panel {
-		border: 1px solid rgba(216, 180, 254, 0.2);
-		background: linear-gradient(135deg, rgba(139, 92, 246, 0.14), rgba(125, 211, 252, 0.08), rgba(255, 255, 255, 0.08));
+		border: 1px solid rgba(216, 180, 254, 0.16);
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.2),
-			0 24px 46px rgba(56, 34, 110, 0.16);
-		backdrop-filter: blur(18px) saturate(145%);
+			0 24px 46px rgba(56, 34, 110, 0.1);
+		backdrop-filter: blur(18px) saturate(128%);
 	}
 
 	.activity-header {
@@ -397,7 +440,7 @@ const twikooConfig = {
 		padding: 1rem 1.05rem;
 		border-radius: 1.35rem;
 		border: 1px solid rgba(216, 180, 254, 0.18);
-		background: linear-gradient(135deg, rgba(147, 197, 253, 0.12), rgba(167, 139, 250, 0.14), rgba(255, 255, 255, 0.08));
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.2),
 			0 24px 42px rgba(56, 34, 110, 0.16);
@@ -475,7 +518,7 @@ const twikooConfig = {
 		border: 1px solid rgba(216, 180, 254, 0.24);
 		border-radius: 999px;
 		padding: 0.72rem 1.05rem;
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(167, 139, 250, 0.12));
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(196, 181, 253, 0.08));
 		color: var(--text-normal);
 		font: inherit;
 		font-weight: 700;
@@ -517,10 +560,10 @@ const twikooConfig = {
 
 	.mood-tab {
 		appearance: none;
-		border: 1px solid rgba(216, 180, 254, 0.2);
+		border: 1px solid rgba(216, 180, 254, 0.16);
 		border-radius: 999px;
 		padding: 0.68rem 0.95rem;
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(167, 139, 250, 0.1));
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(196, 181, 253, 0.08));
 		color: var(--text-normal);
 		font: inherit;
 		font-weight: 700;
@@ -530,7 +573,7 @@ const twikooConfig = {
 
 	.mood-tab.is-active {
 		border-color: rgba(191, 219, 254, 0.28);
-		background: linear-gradient(135deg, rgba(125, 211, 252, 0.24), rgba(167, 139, 250, 0.22));
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(191, 219, 254, 0.12), rgba(196, 181, 253, 0.1));
 		transform: translateY(-1px);
 	}
 
@@ -594,7 +637,7 @@ const twikooConfig = {
 	.board-pills span {
 		padding: 0.8rem 0.95rem;
 		border-radius: 1rem;
-		background: linear-gradient(135deg, rgba(167, 139, 250, 0.16), rgba(125, 211, 252, 0.12), rgba(255, 255, 255, 0.08));
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
 		border: 1px solid rgba(216, 180, 254, 0.18);
 		line-height: 1.75;
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
@@ -667,12 +710,12 @@ const twikooConfig = {
 		border: 1px solid rgba(191, 219, 254, 0.2);
 		border-radius: 1.9rem;
 		background:
-			linear-gradient(180deg, rgba(147, 197, 253, 0.16), rgba(167, 139, 250, 0.2), rgba(255, 255, 255, 0.08)),
-			radial-gradient(circle at top, rgba(255, 255, 255, 0.2), transparent 62%);
+			linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(196, 181, 253, 0.1), rgba(125, 211, 252, 0.08)),
+			radial-gradient(circle at top, rgba(255, 255, 255, 0.26), transparent 62%);
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.2),
-			0 30px 70px rgba(56, 34, 110, 0.22);
-		backdrop-filter: blur(22px) saturate(155%);
+			0 30px 70px rgba(56, 34, 110, 0.12);
+		backdrop-filter: blur(22px) saturate(135%);
 	}
 
 	.board-shell-glow,
@@ -705,7 +748,7 @@ const twikooConfig = {
 		position: relative;
 		padding: 0.5rem;
 		border-radius: 1.3rem;
-		background: linear-gradient(180deg, rgba(147, 197, 253, 0.1), rgba(167, 139, 250, 0.14), rgba(255, 255, 255, 0.06));
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.06));
 	}
 
 	.twikoo-host :global(.tk-comments-container) {
@@ -722,10 +765,10 @@ const twikooConfig = {
 		padding: 1rem;
 		border: 1px solid rgba(216, 180, 254, 0.18);
 		border-radius: 1.25rem;
-		background: linear-gradient(180deg, rgba(125, 211, 252, 0.1), rgba(167, 139, 250, 0.14), rgba(255, 255, 255, 0.1));
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.22),
-			0 18px 38px rgba(56, 34, 110, 0.12);
+			0 18px 38px rgba(56, 34, 110, 0.08);
 	}
 
 	.twikoo-host :global(.tk-row.actions) {
@@ -748,7 +791,7 @@ const twikooConfig = {
 	.twikoo-host :global(.el-textarea__inner) {
 		border-radius: 1rem !important;
 		border-color: rgba(191, 219, 254, 0.18) !important;
-		background: rgba(255, 255, 255, 0.8) !important;
+		background: rgba(255, 255, 255, 0.9) !important;
 		box-shadow: none !important;
 		transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 	}
@@ -770,8 +813,8 @@ const twikooConfig = {
 	.twikoo-host :global(.tk-comment) {
 		border: 1px solid rgba(216, 180, 254, 0.16);
 		border-radius: 1.15rem;
-		background: linear-gradient(180deg, rgba(147, 197, 253, 0.1), rgba(167, 139, 250, 0.12), rgba(255, 255, 255, 0.1));
-		box-shadow: 0 18px 36px rgba(56, 34, 110, 0.12);
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
+		box-shadow: 0 18px 36px rgba(56, 34, 110, 0.08);
 	}
 
 	.twikoo-host :global(.tk-comment) {
@@ -811,7 +854,53 @@ const twikooConfig = {
 	}
 
 	.twikoo-host :global(.tk-replies .tk-comment) {
-		background: linear-gradient(180deg, rgba(125, 211, 252, 0.1), rgba(167, 139, 250, 0.1), rgba(255, 255, 255, 0.08));
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(191, 219, 254, 0.08), rgba(196, 181, 253, 0.06));
+	}
+
+	.comment-helper {
+		position: relative;
+		margin-bottom: 0.95rem;
+		padding: 0.95rem;
+		border-radius: 1.2rem;
+	}
+
+	.comment-helper-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.8rem;
+	}
+
+	.comment-helper-head h3 {
+		margin: 0.4rem 0 0;
+		font-size: 1.08rem;
+	}
+
+	.comment-helper-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.72rem;
+		margin-top: 0.9rem;
+	}
+
+	.helper-pill {
+		appearance: none;
+		border: 1px solid rgba(216, 180, 254, 0.16);
+		border-radius: 999px;
+		padding: 0.68rem 0.92rem;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
+		font: inherit;
+		font-size: 0.92rem;
+		font-weight: 600;
+		color: var(--text-normal);
+		cursor: pointer;
+		transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.helper-pill:hover {
+		transform: translateY(-2px);
+		border-color: rgba(191, 219, 254, 0.26);
+		box-shadow: 0 14px 24px rgba(56, 34, 110, 0.08);
 	}
 
 	@media (max-width: 980px) {
@@ -821,7 +910,8 @@ const twikooConfig = {
 		}
 
 		.board-head,
-		.tool-head {
+		.tool-head,
+		.comment-helper-head {
 			flex-direction: column;
 			align-items: flex-start;
 		}
@@ -858,12 +948,14 @@ const twikooConfig = {
 		}
 
 		.tool-actions,
-		.board-pills {
+		.board-pills,
+		.comment-helper-pills {
 			width: 100%;
 		}
 
 		.glass-button,
-		.mood-tab {
+		.mood-tab,
+		.helper-pill {
 			width: 100%;
 			justify-content: center;
 		}
