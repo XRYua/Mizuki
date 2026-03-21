@@ -29,68 +29,11 @@ const twikooConfig = {
 		</p>
 	</header>
 
-	<div class="activity-floating-grid" aria-label="活动亮点">
-		<div class="floating-card">
-			<span class="floating-label">液态氛围</span>
-			<strong>淡紫、浅蓝、柔粉交叠成流动玻璃</strong>
-			<p>不是普通留言板，而是一块带雾感高光、漂浮倒影与夜色流光的沉浸式信笺场。</p>
-		</div>
-		<div class="floating-card">
-			<span class="floating-label">互动方式</span>
-			<strong>写下三行，也能点赞、回应、收藏此刻心情</strong>
-			<p>每一个来访者都可以留下自己的三行，也可以在别人的字句里找到共鸣与停留。</p>
-		</div>
-	</div>
-
 	<div class="activity-note glass-panel">
 		<p>
 			今夜把词句借给风吧：写一小段星光，写一口迟到的晚安，写一封没寄出的心事。
 			你不必写得盛大，三行就够；只要真诚落笔，这三行就会比长篇更动人。
 		</p>
-	</div>
-
-	<div class="activity-tools glass-panel" aria-label="快速灵感工具">
-		<div class="tool-head">
-			<div>
-				<p class="tool-kicker">可以更好玩一点</p>
-				<h2>灵感切换 · 快速落笔 · 随机心动</h2>
-			</div>
-			<div class="tool-actions">
-				<button class="glass-button is-primary" type="button" data-action="random-idea">换一条灵感</button>
-				<button class="glass-button" type="button" data-action="scroll-comment">直接去留言</button>
-			</div>
-		</div>
-
-		<div class="mood-tabs" role="tablist" aria-label="三行情书主题切换">
-			<button class="mood-tab is-active" type="button" role="tab" aria-selected="true" data-mood="self">写给自己</button>
-			<button class="mood-tab" type="button" role="tab" aria-selected="false" data-mood="distance">写给远方</button>
-			<button class="mood-tab" type="button" role="tab" aria-selected="false" data-mood="secret">写给心事</button>
-		</div>
-
-		<div class="idea-stage">
-			<div class="idea-panel glass-mini-panel">
-				<p class="idea-label">当前主题</p>
-				<h3 id="idea-title">写给自己</h3>
-				<p id="idea-copy" class="idea-copy">把今天没有来得及说给自己的温柔补上：夸夸自己，抱抱自己，也允许自己慢一点。</p>
-			</div>
-			<div class="idea-panel glass-mini-panel">
-				<p class="idea-label">三行示范</p>
-				<p id="idea-poem" class="idea-poem">
-					今天也辛苦了，<br />
-					别急着变成很厉害的人，<br />
-					你先好好被自己喜欢。
-				</p>
-			</div>
-			<div class="idea-panel glass-mini-panel idea-panel-cta">
-				<p class="idea-label">落笔提示</p>
-				<ul class="idea-list">
-					<li>第一行写想说给谁</li>
-					<li>第二行写最真实的情绪</li>
-					<li>第三行写你想留下的回音</li>
-				</ul>
-				<button class="glass-button is-wide" type="button" data-action="focus-comment">我想立刻写</button>
-			</div>
-		</div>
 	</div>
 
 	<div class="activity-scene glass-panel">
@@ -113,31 +56,11 @@ const twikooConfig = {
 					在这面淡紫渐变蓝的液态玻璃墙里，每一段三行情书都会被认真看见、被温柔停留，也许还会刚好击中另一个人的心。
 				</p>
 			</div>
-			<div class="board-pills" aria-label="活动特性">
-				<span>液态玻璃</span>
-				<span>三行短诗</span>
-				<span>公开互动</span>
-			</div>
 		</div>
 		<div class="board-shell">
 			<div class="board-shell-glow"></div>
 			<div class="board-shell-highlight"></div>
 			<div class="board-shell-blur"></div>
-			<div class="comment-helper glass-mini-panel">
-				<div class="comment-helper-head">
-					<div>
-						<p class="idea-label">快捷写作</p>
-						<h3>一键插入更好写</h3>
-					</div>
-					<button class="glass-button" type="button" data-action="focus-comment">展开输入框</button>
-				</div>
-				<div class="comment-helper-pills">
-					<button class="helper-pill" type="button" data-insert-template="开头">想把今天的心情写给你，</button>
-					<button class="helper-pill" type="button" data-insert-template="晚安">今晚的月色很安静，</button>
-					<button class="helper-pill" type="button" data-insert-template="想念">原来想念也会发光，</button>
-					<button class="helper-pill" type="button" data-insert-template="结尾">愿你读到时，刚好温柔。</button>
-				</div>
-			</div>
 			<div id="three-line-twikoo" class="twikoo-host"></div>
 		</div>
 	</div>
@@ -153,97 +76,6 @@ const twikooConfig = {
 <script is:inline src="/scroll-protection.js"></script>
 <script is:inline src="/assets/js/twikoo.all.min.js"></script>
 <script is:inline define:vars={{ twikooConfig }}>
-	const commentTemplates = {
-		开头: "想把今天的心情写给你，\n这里是第一行。\n这里是第二行。\n这里是第三行。",
-		晚安: "今晚的月色很安静，\n我想把迟到的晚安送给你，\n也把温柔留在这里。",
-		想念: "原来想念也会发光，\n它在每一个没说出口的夜里，\n替我慢慢靠近你。",
-		结尾: "愿你读到时，刚好温柔。",
-	};
-
-	const poemIdeas = {
-		self: {
-			title: "写给自己",
-			copy: "把今天没有来得及说给自己的温柔补上：夸夸自己，抱抱自己，也允许自己慢一点。",
-			poem: ["今天也辛苦了，", "别急着变成很厉害的人，", "你先好好被自己喜欢。"],
-		},
-		distance: {
-			title: "写给远方",
-			copy: "给那个暂时不在身边的人写三行风，把想念、牵挂和一句晚安一起寄出去。",
-			poem: ["风从你那边吹来时，", "我把没说完的话藏进夜里，", "等下一次见面再轻轻告诉你。"],
-		},
-		secret: {
-			title: "写给心事",
-			copy: "如果有一句话一直停在心口，就让它先在这里落地；哪怕不署名，也可以很真诚。",
-			poem: ["有些喜欢不必声张，", "它安静地亮在每一个深夜里，", "像月光替我说过一次想你。"],
-		},
-	};
-
-	function renderIdea(moodKey) {
-		const idea = poemIdeas[moodKey];
-		const titleEl = document.getElementById("idea-title");
-		const copyEl = document.getElementById("idea-copy");
-		const poemEl = document.getElementById("idea-poem");
-		if (!idea || !titleEl || !copyEl || !poemEl) return;
-		titleEl.textContent = idea.title;
-		copyEl.textContent = idea.copy;
-		poemEl.innerHTML = idea.poem.join("<br />");
-		document.querySelectorAll(".mood-tab").forEach((tab) => {
-			const isActive = tab.getAttribute("data-mood") === moodKey;
-			tab.classList.toggle("is-active", isActive);
-			tab.setAttribute("aria-selected", isActive ? "true" : "false");
-		});
-	}
-
-	function insertTemplateToComment(templateKey) {
-		const template = commentTemplates[templateKey];
-		if (!template) return;
-		const textarea = document.querySelector("#three-line-twikoo textarea, #three-line-twikoo .el-textarea__inner");
-		if (!textarea) {
-			document.getElementById("three-line-twikoo")?.scrollIntoView({ behavior: "smooth", block: "start" });
-			return;
-		}
-		const currentValue = textarea.value || "";
-		textarea.value = currentValue ? `${currentValue}\n${template}` : template;
-		textarea.dispatchEvent(new Event("input", { bubbles: true }));
-		textarea.focus();
-	}
-
-	function bindPoemInteractions() {
-		document.querySelectorAll(".mood-tab").forEach((tab) => {
-			tab.addEventListener("click", () => {
-				renderIdea(tab.getAttribute("data-mood") || "self");
-			});
-		});
-
-		document.querySelectorAll("[data-action='random-idea']").forEach((button) => {
-			button.addEventListener("click", () => {
-				const keys = Object.keys(poemIdeas);
-				const nextKey = keys[Math.floor(Math.random() * keys.length)];
-				renderIdea(nextKey);
-			});
-		});
-
-		const scrollToComment = () => {
-			document.getElementById("three-line-twikoo")?.scrollIntoView({ behavior: "smooth", block: "start" });
-		};
-
-		document.querySelectorAll("[data-action='scroll-comment'], [data-action='focus-comment']").forEach((button) => {
-			button.addEventListener("click", () => {
-				scrollToComment();
-				setTimeout(() => {
-					document.querySelector("#three-line-twikoo textarea, #three-line-twikoo .el-textarea__inner")?.focus();
-				}, 450);
-			});
-		});
-
-		document.querySelectorAll("[data-insert-template]").forEach((button) => {
-			button.addEventListener("click", () => {
-				document.getElementById("three-line-twikoo")?.scrollIntoView({ behavior: "smooth", block: "start" });
-				setTimeout(() => insertTemplateToComment(button.getAttribute("data-insert-template") || "开头"), 420);
-			});
-		});
-	}
-
 	function initThreeLineTwikoo() {
 		if (typeof twikoo === "undefined") {
 			setTimeout(initThreeLineTwikoo, 400);
@@ -264,16 +96,10 @@ const twikooConfig = {
 			});
 	}
 
-	function initThreeLinePoemPage() {
-		renderIdea("self");
-		bindPoemInteractions();
-		initThreeLineTwikoo();
-	}
-
-	document.addEventListener("DOMContentLoaded", initThreeLinePoemPage);
+	document.addEventListener("DOMContentLoaded", initThreeLineTwikoo);
 	if (window.swup?.hooks) {
 		window.swup.hooks.on("content:replace", () => {
-			setTimeout(initThreeLinePoemPage, 200);
+			setTimeout(initThreeLineTwikoo, 200);
 		});
 	}
 </script>
@@ -377,8 +203,7 @@ const twikooConfig = {
 		background: rgba(244, 114, 182, 0.18);
 	}
 
-	.glass-panel,
-	.glass-mini-panel {
+	.glass-panel {
 		border: 1px solid rgba(216, 180, 254, 0.16);
 		background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
 		box-shadow:
@@ -429,48 +254,7 @@ const twikooConfig = {
 		color: color-mix(in oklab, var(--text-normal) 72%, rgb(147 197 253) 28%);
 	}
 
-	.activity-floating-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.95rem;
-		margin-top: 1.15rem;
-	}
-
-	.floating-card {
-		padding: 1rem 1.05rem;
-		border-radius: 1.35rem;
-		border: 1px solid rgba(216, 180, 254, 0.18);
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.2),
-			0 24px 42px rgba(56, 34, 110, 0.16);
-		backdrop-filter: blur(16px) saturate(135%);
-	}
-
-	.floating-label {
-		display: inline-flex;
-		margin-bottom: 0.5rem;
-		font-size: 0.74rem;
-		font-weight: 800;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: color-mix(in oklab, rgb(191 219 254) 40%, var(--primary) 60%);
-	}
-
-	.floating-card strong {
-		display: block;
-		font-size: 1.03rem;
-		line-height: 1.7;
-	}
-
-	.floating-card p {
-		margin: 0.55rem 0 0;
-		line-height: 1.85;
-		opacity: 0.9;
-	}
-
 	.activity-note,
-	.activity-tools,
 	.activity-scene,
 	.activity-ending {
 		position: relative;
@@ -486,141 +270,6 @@ const twikooConfig = {
 		font-size: 1rem;
 	}
 
-	.tool-head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.tool-kicker {
-		margin: 0;
-		font-size: 0.76rem;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		font-weight: 800;
-		color: color-mix(in oklab, rgb(191 219 254) 40%, var(--primary) 60%);
-	}
-
-	.tool-head h2 {
-		margin: 0.38rem 0 0;
-		font-size: clamp(1.25rem, 2vw, 1.8rem);
-	}
-
-	.tool-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-	}
-
-	.glass-button {
-		appearance: none;
-		border: 1px solid rgba(216, 180, 254, 0.24);
-		border-radius: 999px;
-		padding: 0.72rem 1.05rem;
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(196, 181, 253, 0.08));
-		color: var(--text-normal);
-		font: inherit;
-		font-weight: 700;
-		cursor: pointer;
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.18),
-			0 12px 24px rgba(56, 34, 110, 0.14);
-		transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-	}
-
-	.glass-button:hover {
-		transform: translateY(-2px);
-		border-color: rgba(191, 219, 254, 0.3);
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.24),
-			0 16px 28px rgba(56, 34, 110, 0.18);
-	}
-
-	.glass-button.is-primary,
-	.glass-button.is-wide,
-	.twikoo-host :global(.el-button--primary),
-	.twikoo-host :global(.tk-submit-action-icon.__submit),
-	.twikoo-host :global(.tk-preview) {
-		background: linear-gradient(135deg, rgba(147, 197, 253, 0.85), rgba(167, 139, 250, 0.95), rgba(244, 114, 182, 0.8)) !important;
-		color: white !important;
-	}
-
-	.glass-button.is-wide {
-		width: 100%;
-		justify-content: center;
-	}
-
-	.mood-tabs {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.7rem;
-		margin-top: 1rem;
-	}
-
-	.mood-tab {
-		appearance: none;
-		border: 1px solid rgba(216, 180, 254, 0.16);
-		border-radius: 999px;
-		padding: 0.68rem 0.95rem;
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(196, 181, 253, 0.08));
-		color: var(--text-normal);
-		font: inherit;
-		font-weight: 700;
-		cursor: pointer;
-		transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-	}
-
-	.mood-tab.is-active {
-		border-color: rgba(191, 219, 254, 0.28);
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(191, 219, 254, 0.12), rgba(196, 181, 253, 0.1));
-		transform: translateY(-1px);
-	}
-
-	.idea-stage {
-		display: grid;
-		grid-template-columns: 1.05fr 1.1fr 0.9fr;
-		gap: 0.9rem;
-		margin-top: 1rem;
-	}
-
-	.idea-panel {
-		padding: 1rem;
-		border-radius: 1.2rem;
-	}
-
-	.idea-label {
-		margin: 0;
-		font-size: 0.74rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		font-weight: 800;
-		color: color-mix(in oklab, rgb(191 219 254) 38%, var(--primary) 62%);
-	}
-
-	.idea-panel h3 {
-		margin: 0.55rem 0 0;
-		font-size: 1.2rem;
-	}
-
-	.idea-copy,
-	.idea-poem {
-		margin: 0.7rem 0 0;
-		line-height: 1.9;
-	}
-
-	.idea-poem {
-		font-size: 1rem;
-		font-weight: 600;
-		color: color-mix(in oklab, var(--text-normal) 74%, rgb(191 219 254) 26%);
-	}
-
-	.idea-list {
-		margin: 0.75rem 0 1rem;
-		padding-left: 1.1rem;
-		line-height: 1.85;
-	}
-
 	.activity-scene {
 		display: grid;
 		gap: 0.85rem;
@@ -633,8 +282,7 @@ const twikooConfig = {
 	}
 
 	.scene-line-grid span,
-	.scene-quote,
-	.board-pills span {
+	.scene-quote {
 		padding: 0.8rem 0.95rem;
 		border-radius: 1rem;
 		background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
@@ -660,10 +308,6 @@ const twikooConfig = {
 	}
 
 	.board-head {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 1rem;
 		margin-bottom: 1rem;
 	}
 
@@ -690,18 +334,6 @@ const twikooConfig = {
 		margin: 0.68rem 0 0;
 		line-height: 1.95;
 		color: color-mix(in oklab, var(--text-normal) 84%, white 16%);
-	}
-
-	.board-pills {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.7rem;
-	}
-
-	.board-pills span {
-		padding-inline: 0.9rem;
-		white-space: nowrap;
-		font-size: 0.9rem;
 	}
 
 	.board-shell {
@@ -844,6 +476,8 @@ const twikooConfig = {
 	.twikoo-host :global(.tk-preview) {
 		border-radius: 999px !important;
 		border: none !important;
+		background: linear-gradient(135deg, rgba(147, 197, 253, 0.85), rgba(167, 139, 250, 0.95), rgba(244, 114, 182, 0.8)) !important;
+		color: white !important;
 		box-shadow: 0 16px 30px rgba(56, 34, 110, 0.18);
 	}
 
@@ -855,66 +489,6 @@ const twikooConfig = {
 
 	.twikoo-host :global(.tk-replies .tk-comment) {
 		background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(191, 219, 254, 0.08), rgba(196, 181, 253, 0.06));
-	}
-
-	.comment-helper {
-		position: relative;
-		margin-bottom: 0.95rem;
-		padding: 0.95rem;
-		border-radius: 1.2rem;
-	}
-
-	.comment-helper-head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.8rem;
-	}
-
-	.comment-helper-head h3 {
-		margin: 0.4rem 0 0;
-		font-size: 1.08rem;
-	}
-
-	.comment-helper-pills {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.72rem;
-		margin-top: 0.9rem;
-	}
-
-	.helper-pill {
-		appearance: none;
-		border: 1px solid rgba(216, 180, 254, 0.16);
-		border-radius: 999px;
-		padding: 0.68rem 0.92rem;
-		background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(196, 181, 253, 0.08), rgba(125, 211, 252, 0.08));
-		font: inherit;
-		font-size: 0.92rem;
-		font-weight: 600;
-		color: var(--text-normal);
-		cursor: pointer;
-		transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-	}
-
-	.helper-pill:hover {
-		transform: translateY(-2px);
-		border-color: rgba(191, 219, 254, 0.26);
-		box-shadow: 0 14px 24px rgba(56, 34, 110, 0.08);
-	}
-
-	@media (max-width: 980px) {
-		.activity-floating-grid,
-		.idea-stage {
-			grid-template-columns: 1fr;
-		}
-
-		.board-head,
-		.tool-head,
-		.comment-helper-head {
-			flex-direction: column;
-			align-items: flex-start;
-		}
 	}
 
 	@media (max-width: 768px) {
@@ -931,9 +505,6 @@ const twikooConfig = {
 		.activity-subline,
 		.activity-note p,
 		.board-description,
-		.floating-card p,
-		.idea-copy,
-		.idea-poem,
 		.scene-line-grid span,
 		.activity-ending p {
 			font-size: 0.96rem;
@@ -945,19 +516,6 @@ const twikooConfig = {
 
 		.scene-quote-right {
 			justify-self: start;
-		}
-
-		.tool-actions,
-		.board-pills,
-		.comment-helper-pills {
-			width: 100%;
-		}
-
-		.glass-button,
-		.mood-tab,
-		.helper-pill {
-			width: 100%;
-			justify-content: center;
 		}
 
 		.board-shell {
