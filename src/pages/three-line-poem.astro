@@ -1,13 +1,21 @@
 ---
-import MainGridLayout from "../layouts/MainGridLayout.astro";
+import Layout from "../layouts/Layout.astro";
 import ThreeLinePoemActivity from "../components/ThreeLinePoemActivity.astro";
 ---
 
-<MainGridLayout>
-	<section class="card-base p-4 mb-4 onload-animation">
-		<p class="text-sm text-[var(--primary)] font-bold m-0">活动页</p>
-		<h1 class="mt-1 mb-2 text-2xl font-bold">三行情书写</h1>
-		<p class="m-0">在这里留下三行短句，所有访客都可以浏览、点赞，并按热度进入排行。</p>
-	</section>
-	<ThreeLinePoemActivity />
-</MainGridLayout>
+<Layout title="三行情书写" description="沉浸式三行情书写活动页，保留原配色并升级评论体验。">
+	<main class="immersive-page-shell">
+		<ThreeLinePoemActivity />
+	</main>
+</Layout>
+
+<style>
+	.immersive-page-shell {
+		position: relative;
+		padding: clamp(5.5rem, 8vw, 7rem) clamp(0.5rem, 2vw, 1.25rem) 2rem;
+		min-height: 100vh;
+		background:
+			radial-gradient(circle at top, color-mix(in oklab, var(--primary) 10%, transparent) 0, transparent 32%),
+			linear-gradient(180deg, color-mix(in oklab, var(--page-bg) 82%, var(--card-bg) 18%) 0%, var(--page-bg) 100%);
+	}
+</style>
