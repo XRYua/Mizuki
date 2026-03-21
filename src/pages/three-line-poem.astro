@@ -1,13 +1,78 @@
 ---
-import MainGridLayout from "../layouts/MainGridLayout.astro";
 import ThreeLinePoemActivity from "../components/ThreeLinePoemActivity.astro";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<MainGridLayout>
-	<section class="card-base p-4 mb-4 onload-animation">
-		<p class="text-sm text-[var(--primary)] font-bold m-0">活动页</p>
-		<h1 class="mt-1 mb-2 text-2xl font-bold">三行情书写</h1>
-		<p class="m-0">在这里留下三行短句，所有访客都可以浏览、点赞，并按热度进入排行。</p>
-	</section>
-	<ThreeLinePoemActivity />
-</MainGridLayout>
+<Layout
+	title="三行情书写"
+	description="沉浸式三行情书写活动页，在月光与玻璃光影之间写下三行想说的话。"
+>
+	<main class="immersive-poem-page">
+		<div class="immersive-backdrop immersive-backdrop-top"></div>
+		<div class="immersive-backdrop immersive-backdrop-bottom"></div>
+		<div class="immersive-container">
+			<ThreeLinePoemActivity />
+		</div>
+	</main>
+</Layout>
+
+<style>
+	.immersive-poem-page {
+		position: relative;
+		min-height: 100vh;
+		padding: clamp(1.2rem, 2vw, 2rem);
+		background:
+			radial-gradient(circle at top, rgba(191, 219, 254, 0.08) 0, transparent 22%),
+			radial-gradient(circle at 18% 18%, rgba(196, 181, 253, 0.14) 0, transparent 24%),
+			radial-gradient(circle at 82% 20%, rgba(125, 211, 252, 0.12) 0, transparent 22%),
+			radial-gradient(circle at 80% 74%, rgba(244, 114, 182, 0.08) 0, transparent 24%),
+			linear-gradient(180deg, #120a24 0%, #1b1236 28%, #1a1f4b 58%, #110a21 100%);
+	}
+
+	.immersive-container {
+		position: relative;
+		width: min(100%, 1080px);
+		margin: 0 auto;
+		padding: min(6vh, 4rem) 0;
+	}
+
+	.immersive-backdrop {
+		position: fixed;
+		z-index: 0;
+		border-radius: 999px;
+		filter: blur(24px);
+		pointer-events: none;
+		opacity: 0.65;
+	}
+
+	.immersive-backdrop-top {
+		width: 22rem;
+		height: 22rem;
+		top: -6rem;
+		left: -6rem;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(196, 181, 253, 0.1), rgba(125, 211, 252, 0.08));
+	}
+
+	.immersive-backdrop-bottom {
+		width: 18rem;
+		height: 18rem;
+		right: -5rem;
+		bottom: 6vh;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(125, 211, 252, 0.08), rgba(244, 114, 182, 0.08));
+	}
+
+	.immersive-poem-page :global(.three-line-poem-activity) {
+		position: relative;
+		z-index: 1;
+	}
+
+	@media (max-width: 768px) {
+		.immersive-poem-page {
+			padding: 0.9rem;
+		}
+
+		.immersive-container {
+			padding: 1rem 0 1.5rem;
+		}
+	}
+</style>
