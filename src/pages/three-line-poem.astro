@@ -22,10 +22,10 @@ import Layout from "../layouts/Layout.astro";
 		min-height: 100vh;
 		padding: clamp(1.2rem, 2vw, 2rem);
 		background:
-			radial-gradient(circle at top, color-mix(in oklab, var(--primary) 16%, transparent) 0, transparent 34%),
-			radial-gradient(circle at 20% 20%, rgba(244, 114, 182, 0.12) 0, transparent 24%),
-			radial-gradient(circle at 80% 70%, rgba(96, 165, 250, 0.14) 0, transparent 26%),
-			linear-gradient(180deg, color-mix(in oklab, var(--page-bg) 78%, #0f172a 22%) 0%, color-mix(in oklab, var(--page-bg) 92%, white 8%) 100%);
+			radial-gradient(circle at top, rgba(139, 92, 246, 0.2) 0, transparent 34%),
+			radial-gradient(circle at 20% 20%, rgba(244, 114, 182, 0.16) 0, transparent 24%),
+			radial-gradient(circle at 80% 70%, rgba(167, 139, 250, 0.14) 0, transparent 26%),
+			linear-gradient(180deg, #120a24 0%, #1f123d 32%, #241046 58%, #140b27 100%);
 	}
 
 	.immersive-container {
@@ -49,7 +49,7 @@ import Layout from "../layouts/Layout.astro";
 		height: 22rem;
 		top: -6rem;
 		left: -6rem;
-		background: color-mix(in oklab, var(--primary) 22%, transparent);
+		background: rgba(139, 92, 246, 0.26);
 	}
 
 	.immersive-backdrop-bottom {
@@ -57,7 +57,7 @@ import Layout from "../layouts/Layout.astro";
 		height: 18rem;
 		right: -5rem;
 		bottom: 6vh;
-		background: rgba(244, 114, 182, 0.22);
+		background: rgba(168, 85, 247, 0.24);
 	}
 
 	.immersive-poem-page :global(.three-line-poem-activity) {
