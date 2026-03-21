@@ -1,13 +1,77 @@
 ---
-import MainGridLayout from "../layouts/MainGridLayout.astro";
 import ThreeLinePoemActivity from "../components/ThreeLinePoemActivity.astro";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<MainGridLayout>
-	<section class="card-base p-4 mb-4 onload-animation">
-		<p class="text-sm text-[var(--primary)] font-bold m-0">活动页</p>
-		<h1 class="mt-1 mb-2 text-2xl font-bold">三行情书写</h1>
-		<p class="m-0">在这里留下三行短句，所有访客都可以浏览、点赞，并按热度进入排行。</p>
-	</section>
-	<ThreeLinePoemActivity />
-</MainGridLayout>
+<Layout
+	title="三行情书写"
+	description="沉浸式三行情书写活动页，在月光与玻璃光影之间写下三行想说的话。"
+>
+	<main class="immersive-poem-page">
+		<div class="immersive-backdrop immersive-backdrop-top"></div>
+		<div class="immersive-backdrop immersive-backdrop-bottom"></div>
+		<div class="immersive-container">
+			<ThreeLinePoemActivity />
+		</div>
+	</main>
+</Layout>
+
+<style>
+	.immersive-poem-page {
+		position: relative;
+		min-height: 100vh;
+		padding: clamp(1.2rem, 2vw, 2rem);
+		background:
+			radial-gradient(circle at top, color-mix(in oklab, var(--primary) 16%, transparent) 0, transparent 34%),
+			radial-gradient(circle at 20% 20%, rgba(244, 114, 182, 0.12) 0, transparent 24%),
+			radial-gradient(circle at 80% 70%, rgba(96, 165, 250, 0.14) 0, transparent 26%),
+			linear-gradient(180deg, color-mix(in oklab, var(--page-bg) 78%, #0f172a 22%) 0%, color-mix(in oklab, var(--page-bg) 92%, white 8%) 100%);
+	}
+
+	.immersive-container {
+		position: relative;
+		width: min(100%, 1080px);
+		margin: 0 auto;
+		padding: min(6vh, 4rem) 0;
+	}
+
+	.immersive-backdrop {
+		position: fixed;
+		z-index: 0;
+		border-radius: 999px;
+		filter: blur(24px);
+		pointer-events: none;
+		opacity: 0.65;
+	}
+
+	.immersive-backdrop-top {
+		width: 22rem;
+		height: 22rem;
+		top: -6rem;
+		left: -6rem;
+		background: color-mix(in oklab, var(--primary) 22%, transparent);
+	}
+
+	.immersive-backdrop-bottom {
+		width: 18rem;
+		height: 18rem;
+		right: -5rem;
+		bottom: 6vh;
+		background: rgba(244, 114, 182, 0.22);
+	}
+
+	.immersive-poem-page :global(.three-line-poem-activity) {
+		position: relative;
+		z-index: 1;
+	}
+
+	@media (max-width: 768px) {
+		.immersive-poem-page {
+			padding: 0.9rem;
+		}
+
+		.immersive-container {
+			padding: 1rem 0 1.5rem;
+		}
+	}
+</style>

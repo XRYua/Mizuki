@@ -8,49 +8,62 @@ const twikooConfig = {
 };
 ---
 
-<section class="three-line-poem-activity card-base mb-6 onload-animation">
+<section class="three-line-poem-activity onload-animation">
 	<div class="activity-orb activity-orb-left"></div>
+	<div class="activity-orb activity-orb-center"></div>
 	<div class="activity-orb activity-orb-right"></div>
+	<div class="activity-stars" aria-hidden="true"></div>
 
-	<div class="activity-header">
-		<p class="activity-eyebrow">✨ 置顶活动</p>
-		<h2>三行情书写</h2>
-		<p>你可以在这里写下三行：一句给自己，一句给远方，一句给还没说出口的心事。</p>
-	</div>
+	<header class="activity-header">
+		<p class="activity-eyebrow">三行情书写 · 沉浸留言场</p>
+		<h1>把今夜想说的话，写成三行。</h1>
+		<p class="activity-lead">
+			你可以在这里写下一句给自己，一句给远方，一句给还没说出口的心事；
+			也可以把月色、晚风、想念与迟到的晚安，轻轻留在这面会发光的留言墙里。
+		</p>
+		<p class="activity-subline">
+			愿每个路过的人，都能在别人的三行里，看见自己某一刻没有说完的情绪。
+		</p>
+	</header>
 
 	<div class="activity-note">
-		<p>今夜把词句借给风吧：写一小段星光，写一口迟到的晚安，写一封没寄出的心事。</p>
+		<p>
+			今夜把词句借给风吧：写一小段星光，写一口迟到的晚安，写一封没寄出的心事。
+			你不必写得盛大，三行就够；真诚落笔，已经很动人。
+		</p>
 	</div>
 
-	<div class="activity-meta-grid" aria-label="活动信息卡片">
-		<div class="meta-card">
-			<span class="meta-label">Atmosphere</span>
-			<strong>月光信笺 · 柔焦留言墙</strong>
-			<p>将评论输入区重塑成带有玻璃高光与诗意边框的独立展示区。</p>
-		</div>
-		<div class="meta-card">
-			<span class="meta-label">Interaction</span>
-			<strong>聚焦写作 · 轻提示引导</strong>
-			<p>让昵称、邮箱、内容与按钮层级更清晰，阅读和互动更沉浸。</p>
+	<div class="activity-scene">
+		<div class="scene-quote scene-quote-left">“写给自己”</div>
+		<div class="scene-quote scene-quote-right">“写给远方”</div>
+		<div class="scene-line-grid" aria-label="三行情书灵感提示">
+			<span>今夜想对谁说一句晚安？</span>
+			<span>哪一句心事，你一直没寄出去？</span>
+			<span>如果只能写三行，你最想留下什么？</span>
 		</div>
 	</div>
 
 	<div class="activity-board">
 		<div class="board-head">
-			<div>
-				<p class="board-kicker">Twikoo Guestbook</p>
-				<div class="board-title">💌 活动留言墙</div>
+			<div class="board-heading">
+				<p class="board-kicker">匿名也温柔，署名也浪漫</p>
+				<h2 class="board-title">💌 三行情书留言墙</h2>
+				<p class="board-description">
+					使用昵称与邮箱标识后即可落笔，也可以给喜欢的字句点一个赞；
+					让每一段三行情书，都被认真看见、被温柔停留。
+				</p>
 			</div>
-			<span class="board-badge">Custom Styled</span>
 		</div>
-		<p class="board-tip">使用昵称 + 邮箱标识后即可落笔，也可以给喜欢的字句点一个赞。</p>
 		<div class="board-shell">
 			<div class="board-shell-glow"></div>
+			<div class="board-shell-highlight"></div>
 			<div id="three-line-twikoo" class="twikoo-host"></div>
 		</div>
 	</div>
 
-	<p class="activity-ending">愿每一封情，都能被温柔读到。</p>
+	<footer class="activity-ending">
+		<p>愿每一封情书都不落空，愿每一个深夜写下的名字，最终都有回音。</p>
+	</footer>
 </section>
 
 <script is:inline src="/scroll-protection.js"></script>
@@ -88,211 +101,266 @@ const twikooConfig = {
 	.three-line-poem-activity {
 		position: relative;
 		overflow: hidden;
-		padding: 1.4rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
-		border-radius: 1.5rem;
+		padding: clamp(1.2rem, 2vw, 2rem);
+		border: 1px solid color-mix(in oklab, var(--primary) 22%, rgba(255, 255, 255, 0.22));
+		border-radius: 2rem;
 		background:
-			radial-gradient(circle at top left, color-mix(in oklab, var(--primary) 18%, transparent) 0, transparent 42%),
-			radial-gradient(circle at 85% 15%, color-mix(in oklab, #f472b6 20%, transparent) 0, transparent 28%),
-			linear-gradient(145deg, color-mix(in oklab, var(--primary) 12%, var(--card-bg)) 0%, color-mix(in oklab, var(--card-bg) 94%, white 6%) 55%, color-mix(in oklab, var(--card-bg) 90%, var(--primary) 10%) 100%);
-		box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+			radial-gradient(circle at top left, color-mix(in oklab, var(--primary) 20%, transparent) 0, transparent 34%),
+			radial-gradient(circle at 80% 10%, color-mix(in oklab, #f472b6 16%, transparent) 0, transparent 24%),
+			radial-gradient(circle at 50% 100%, color-mix(in oklab, #60a5fa 12%, transparent) 0, transparent 34%),
+			linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.58) 38%, rgba(255, 255, 255, 0.36) 100%);
+		box-shadow:
+			0 32px 80px rgba(15, 23, 42, 0.18),
+			inset 0 1px 0 rgba(255, 255, 255, 0.5);
+		backdrop-filter: blur(18px);
 		isolation: isolate;
+	}
+
+	.activity-stars {
+		position: absolute;
+		inset: 0;
+		background-image:
+			radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.8) 0 2px, transparent 2.5px),
+			radial-gradient(circle at 74% 18%, rgba(255, 255, 255, 0.65) 0 1.5px, transparent 2px),
+			radial-gradient(circle at 82% 36%, rgba(255, 255, 255, 0.5) 0 1.5px, transparent 2px),
+			radial-gradient(circle at 34% 78%, rgba(255, 255, 255, 0.42) 0 1.5px, transparent 2px);
+		opacity: 0.8;
+		pointer-events: none;
 	}
 
 	.activity-orb {
 		position: absolute;
 		z-index: -1;
 		border-radius: 999px;
-		filter: blur(10px);
-		opacity: 0.7;
+		filter: blur(14px);
+		opacity: 0.75;
 	}
 
 	.activity-orb-left {
-		width: 10rem;
-		height: 10rem;
-		top: -3rem;
-		left: -2rem;
+		width: 12rem;
+		height: 12rem;
+		top: -4rem;
+		left: -3rem;
 		background: color-mix(in oklab, var(--primary) 28%, transparent);
 	}
 
+	.activity-orb-center {
+		width: 14rem;
+		height: 14rem;
+		top: 28%;
+		left: 46%;
+		transform: translate(-50%, -50%);
+		background: color-mix(in oklab, #f9a8d4 18%, transparent);
+	}
+
 	.activity-orb-right {
-		width: 8rem;
-		height: 8rem;
-		bottom: 2rem;
-		right: -1.5rem;
-		background: color-mix(in oklab, #f472b6 28%, transparent);
+		width: 11rem;
+		height: 11rem;
+		bottom: 1rem;
+		right: -2rem;
+		background: color-mix(in oklab, #60a5fa 18%, transparent);
 	}
 
-	.activity-header h2 {
-		margin: 0.25rem 0;
-		font-size: clamp(1.5rem, 2vw, 1.95rem);
-		letter-spacing: 0.03em;
-	}
-
-	.activity-header > p:last-child {
-		max-width: 42rem;
-		margin: 0;
-		line-height: 1.85;
-		color: color-mix(in oklab, var(--text-normal) 88%, white 12%);
+	.activity-header {
+		position: relative;
+		padding: 0.35rem 0 0;
 	}
 
 	.activity-eyebrow {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.35rem;
 		margin: 0;
-		padding: 0.38rem 0.72rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
+		padding: 0.42rem 0.78rem;
+		border: 1px solid color-mix(in oklab, var(--primary) 26%, transparent);
 		border-radius: 999px;
-		background: color-mix(in oklab, var(--primary) 10%, transparent);
+		background: rgba(255, 255, 255, 0.22);
 		color: var(--primary);
 		font-size: 0.82rem;
 		font-weight: 800;
 		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		backdrop-filter: blur(8px);
+	}
+
+	.activity-header h1 {
+		margin: 0.9rem 0 0.7rem;
+		font-size: clamp(2rem, 5vw, 3.6rem);
+		line-height: 1.08;
+		letter-spacing: 0.04em;
+		text-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+	}
+
+	.activity-lead,
+	.activity-subline {
+		max-width: 56rem;
+		margin: 0;
+		line-height: 1.95;
+		font-size: 1rem;
+		color: color-mix(in oklab, var(--text-normal) 90%, white 10%);
+	}
+
+	.activity-subline {
+		margin-top: 0.65rem;
+		color: color-mix(in oklab, var(--text-normal) 72%, var(--primary) 28%);
 	}
 
 	.activity-note {
-		margin-top: 1rem;
-		padding: 0.95rem 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 22%, transparent);
-		border-radius: 1rem;
-		background: linear-gradient(135deg, color-mix(in oklab, var(--card-bg) 92%, var(--primary) 8%) 0%, color-mix(in oklab, var(--card-bg) 82%, white 18%) 100%);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
-		backdrop-filter: blur(8px);
+		position: relative;
+		margin-top: 1.2rem;
+		padding: 1rem 1.1rem;
+		border: 1px solid color-mix(in oklab, var(--primary) 18%, transparent);
+		border-radius: 1.25rem;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.22));
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.55),
+			0 20px 40px rgba(15, 23, 42, 0.08);
+		backdrop-filter: blur(12px);
 	}
 
 	.activity-note p {
 		margin: 0;
-		opacity: 0.92;
 		line-height: 1.9;
+		font-size: 0.98rem;
 	}
 
-	.activity-meta-grid {
+	.activity-scene {
+		position: relative;
 		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.9rem;
-		margin-top: 1rem;
+		gap: 0.85rem;
+		margin-top: 1.15rem;
+		padding: 1.05rem;
+		border: 1px solid color-mix(in oklab, rgba(255, 255, 255, 0.7) 70%, var(--primary) 30%);
+		border-radius: 1.4rem;
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.14));
+		backdrop-filter: blur(10px);
 	}
 
-	.meta-card {
-		padding: 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 18%, transparent);
-		border-radius: 1.1rem;
-		background: color-mix(in oklab, var(--card-bg) 88%, white 12%);
-		box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+	.scene-line-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.8rem;
 	}
 
-	.meta-label {
-		display: block;
-		margin-bottom: 0.45rem;
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: color-mix(in oklab, var(--text-muted) 85%, var(--primary) 15%);
+	.scene-line-grid span,
+	.scene-quote {
+		padding: 0.8rem 0.95rem;
+		border-radius: 1rem;
+		background: rgba(255, 255, 255, 0.34);
+		border: 1px solid rgba(255, 255, 255, 0.36);
+		line-height: 1.75;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
 	}
 
-	.meta-card strong {
-		display: block;
-		font-size: 1rem;
-	}
-
-	.meta-card p {
-		margin: 0.55rem 0 0;
+	.scene-quote {
+		display: inline-flex;
+		width: fit-content;
 		font-size: 0.92rem;
-		line-height: 1.7;
-		opacity: 0.85;
+		color: color-mix(in oklab, var(--text-normal) 75%, var(--primary) 25%);
+	}
+
+	.scene-quote-right {
+		justify-self: end;
 	}
 
 	.activity-board {
-		margin-top: 1.15rem;
+		position: relative;
+		margin-top: 1.25rem;
 	}
 
 	.board-head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
+		margin-bottom: 1rem;
+	}
+
+	.board-heading {
+		padding: 0.2rem 0.1rem 0;
 	}
 
 	.board-kicker {
-		margin: 0 0 0.28rem;
-		font-size: 0.75rem;
+		margin: 0;
+		font-size: 0.82rem;
 		font-weight: 800;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: color-mix(in oklab, var(--text-muted) 78%, var(--primary) 22%);
+		letter-spacing: 0.12em;
+		color: color-mix(in oklab, var(--text-normal) 65%, var(--primary) 35%);
 	}
 
 	.board-title {
-		font-size: 1.18rem;
+		margin: 0.5rem 0 0;
+		font-size: clamp(1.4rem, 2vw, 2rem);
 		font-weight: 800;
 	}
 
-	.board-badge {
-		padding: 0.45rem 0.8rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 28%, transparent);
-		border-radius: 999px;
-		background: color-mix(in oklab, var(--primary) 10%, transparent);
-		color: var(--primary);
-		font-size: 0.78rem;
-		font-weight: 800;
-		white-space: nowrap;
-	}
-
-	.board-tip {
-		margin: 0.6rem 0 1rem;
-		opacity: 0.8;
-		font-size: 0.94rem;
-		line-height: 1.75;
+	.board-description {
+		max-width: 48rem;
+		margin: 0.65rem 0 0;
+		line-height: 1.9;
+		color: color-mix(in oklab, var(--text-normal) 82%, white 18%);
 	}
 
 	.board-shell {
 		position: relative;
-		padding: 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 16%, transparent);
-		border-radius: 1.35rem;
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.38));
+		padding: clamp(0.95rem, 1.6vw, 1.25rem);
+		border: 1px solid color-mix(in oklab, rgba(255, 255, 255, 0.9) 72%, var(--primary) 28%);
+		border-radius: 1.8rem;
+		background:
+			linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.4)),
+			radial-gradient(circle at top, color-mix(in oklab, var(--primary) 12%, transparent), transparent 58%);
 		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.65),
-			0 20px 40px rgba(15, 23, 42, 0.1);
-		backdrop-filter: blur(14px);
+			inset 0 1px 0 rgba(255, 255, 255, 0.7),
+			0 28px 60px rgba(15, 23, 42, 0.14);
+		backdrop-filter: blur(16px);
 	}
 
-	.board-shell-glow {
+	.board-shell-glow,
+	.board-shell-highlight {
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
-		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 8%, transparent), transparent 30%, color-mix(in oklab, #f472b6 12%, transparent));
 		pointer-events: none;
+	}
+
+	.board-shell-glow {
+		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 10%, transparent), transparent 35%, color-mix(in oklab, #f9a8d4 10%, transparent));
+	}
+
+	.board-shell-highlight {
+		inset: 1px;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 26%);
 	}
 
 	.twikoo-host {
 		position: relative;
-		padding: 0.35rem;
-		border-radius: 1rem;
-		background: color-mix(in oklab, var(--card-bg) 86%, white 14%);
+		padding: 0.45rem;
+		border-radius: 1.25rem;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.28));
 	}
 
 	.twikoo-host :global(.tk-comments-container) {
-		margin-top: 1rem;
-		padding-top: 1rem;
-		border-top: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
+		margin-top: 1.2rem;
+		padding-top: 1.1rem;
+		border-top: 1px solid color-mix(in oklab, var(--primary) 12%, transparent);
+	}
+
+	.twikoo-host :global(.tk-comments-title) {
+		margin-bottom: 0.95rem;
 	}
 
 	.twikoo-host :global(.tk-submit) {
 		padding: 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
-		border-radius: 1rem;
-		background: linear-gradient(180deg, color-mix(in oklab, white 88%, var(--primary) 12%), color-mix(in oklab, white 94%, var(--card-bg) 6%));
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+		border: 1px solid color-mix(in oklab, var(--primary) 12%, transparent);
+		border-radius: 1.2rem;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.62));
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.78),
+			0 16px 35px rgba(15, 23, 42, 0.05);
 	}
 
 	.twikoo-host :global(.tk-row.actions) {
-		margin-top: 0.85rem;
-		padding-top: 0.85rem;
+		margin-top: 0.95rem;
+		padding-top: 0.95rem;
 		border-top: 1px dashed color-mix(in oklab, var(--primary) 16%, transparent);
+	}
+
+	.twikoo-host :global(.tk-meta-input) {
+		gap: 0.75rem;
 	}
 
 	.twikoo-host :global(.tk-avatar),
@@ -303,91 +371,124 @@ const twikooConfig = {
 	.twikoo-host :global(.tk-input),
 	.twikoo-host :global(.el-input__inner),
 	.twikoo-host :global(.el-textarea__inner) {
-		border-radius: 0.9rem !important;
+		border-radius: 1rem !important;
 		border-color: color-mix(in oklab, var(--primary) 16%, transparent) !important;
 		background: rgba(255, 255, 255, 0.9) !important;
 		box-shadow: none !important;
 		transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 	}
 
+	.twikoo-host :global(.el-input__inner),
+	.twikoo-host :global(.el-textarea__inner) {
+		padding: 0.9rem 1rem !important;
+	}
+
 	.twikoo-host :global(.tk-input:focus),
 	.twikoo-host :global(.el-input__inner:focus),
 	.twikoo-host :global(.el-textarea__inner:focus) {
-		border-color: color-mix(in oklab, var(--primary) 55%, transparent) !important;
-		box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 14%, transparent) !important;
+		border-color: color-mix(in oklab, var(--primary) 52%, transparent) !important;
+		box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 12%, transparent) !important;
 		transform: translateY(-1px);
 	}
 
 	.twikoo-host :global(.tk-preview-container),
 	.twikoo-host :global(.tk-comment) {
-		border: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
-		border-radius: 1rem;
-		background: color-mix(in oklab, white 92%, var(--card-bg) 8%);
-		box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+		border: 1px solid color-mix(in oklab, var(--primary) 10%, transparent);
+		border-radius: 1.15rem;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.66));
+		box-shadow: 0 18px 36px rgba(15, 23, 42, 0.07);
 	}
 
 	.twikoo-host :global(.tk-comment) {
-		padding: 0.85rem 0.95rem;
-		margin-bottom: 0.85rem;
+		margin-bottom: 0.95rem;
+		padding: 0.95rem 1rem;
 	}
 
 	.twikoo-host :global(.tk-comment .tk-content) {
-		line-height: 1.85;
-		font-size: 0.97rem;
+		line-height: 1.9;
+		font-size: 0.98rem;
 	}
 
+	.twikoo-host :global(.tk-tag),
 	.twikoo-host :global(.tk-action-icon),
-	.twikoo-host :global(.tk-icon.__comments),
-	.twikoo-host :global(.tk-comments-title > span) {
-		color: color-mix(in oklab, var(--text-normal) 82%, var(--primary) 18%);
+	.twikoo-host :global(.tk-comments-title > span),
+	.twikoo-host :global(.tk-icon.__comments) {
+		color: color-mix(in oklab, var(--text-normal) 78%, var(--primary) 22%);
 	}
 
 	.twikoo-host :global(.tk-extras),
 	.twikoo-host :global(.tk-meta) {
-		opacity: 0.8;
+		opacity: 0.82;
 	}
 
 	.twikoo-host :global(.el-button),
-	.twikoo-host :global(.tk-submit-action-icon.__submit) {
+	.twikoo-host :global(.tk-submit-action-icon.__submit),
+	.twikoo-host :global(.tk-preview) {
 		border-radius: 999px !important;
 	}
 
 	.twikoo-host :global(.el-button--primary),
-	.twikoo-host :global(.tk-preview),
-	.twikoo-host :global(.tk-submit-action-icon.__submit) {
+	.twikoo-host :global(.tk-submit-action-icon.__submit),
+	.twikoo-host :global(.tk-preview) {
 		border: none !important;
-		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 88%, white 12%), color-mix(in oklab, var(--primary) 68%, #f472b6 32%)) !important;
-		box-shadow: 0 12px 24px color-mix(in oklab, var(--primary) 22%, transparent);
+		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 88%, white 12%), color-mix(in oklab, var(--primary) 62%, #f472b6 38%)) !important;
+		box-shadow: 0 14px 28px color-mix(in oklab, var(--primary) 20%, transparent);
+	}
+
+	.twikoo-host :global(.tk-replies) {
+		margin-top: 0.85rem;
+		padding-left: 0.8rem;
+		border-left: 1px solid color-mix(in oklab, var(--primary) 12%, transparent);
 	}
 
 	.twikoo-host :global(.tk-replies .tk-comment) {
-		background: color-mix(in oklab, white 86%, var(--primary) 14%);
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.58));
 	}
 
 	.activity-ending {
-		margin: 1rem 0 0;
-		font-weight: 700;
-		letter-spacing: 0.03em;
-		color: color-mix(in oklab, var(--text-normal) 78%, var(--primary) 22%);
+		margin-top: 1.2rem;
+		padding-top: 0.25rem;
+		text-align: center;
+	}
+
+	.activity-ending p {
+		margin: 0;
+		line-height: 1.85;
+		font-weight: 600;
+		color: color-mix(in oklab, var(--text-normal) 75%, var(--primary) 25%);
+	}
+
+	@media (max-width: 900px) {
+		.scene-line-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	@media (max-width: 768px) {
 		.three-line-poem-activity {
 			padding: 1rem;
-			border-radius: 1.2rem;
+			border-radius: 1.5rem;
 		}
 
-		.activity-meta-grid {
-			grid-template-columns: 1fr;
+		.activity-header h1 {
+			font-size: clamp(1.8rem, 10vw, 2.6rem);
 		}
 
-		.board-head {
-			align-items: flex-start;
-			flex-direction: column;
+		.activity-lead,
+		.activity-subline,
+		.board-description,
+		.activity-note p,
+		.scene-line-grid span {
+			font-size: 0.96rem;
+		}
+
+		.scene-quote-right {
+			justify-self: start;
 		}
 
 		.board-shell {
 			padding: 0.8rem;
+			border-radius: 1.35rem;
 		}
 	}
 </style>
