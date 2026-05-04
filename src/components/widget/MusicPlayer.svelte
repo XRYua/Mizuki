@@ -22,9 +22,9 @@ let meting_server = musicPlayerConfig.server ?? "netease";
 let meting_type = musicPlayerConfig.type ?? "playlist";
 
 // 播放状态，默认为 false (未播放)
-let isPlaying = false;
+let isPlaying = true;
 // 播放器是否展开，默认为 false
-let isExpanded = false;
+let isExpanded = true;
 // 播放器是否隐藏，默认为 false
 let isHidden = false;
 // 是否显示播放列表，默认为 false
@@ -77,8 +77,16 @@ let progressBar: HTMLElement;
 let volumeBar: HTMLElement;
 
 const localPlaylist = [
-	{
+ {
 		id: 1,
+		title: "愿 (One More Wish) (中文版)",
+		artist: "Hiyuki",
+		cover: "assets/music/cover/cl.jpg",
+		url: "assets/music/url/愿 (One More Wish) (中文版).mp3",
+		duration: 240,
+	},
+	{
+		id: 2,
 		title: "ひとり上手",
 		artist: "Kaya",
 		cover: "assets/music/cover/hitori.jpg",
@@ -86,7 +94,7 @@ const localPlaylist = [
 		duration: 240,
 	},
 	{
-		id: 2,
+		id: 3,
 		title: "眩耀夜行",
 		artist: "スリーズブーケ",
 		cover: "assets/music/cover/xryx.jpg",
@@ -94,20 +102,12 @@ const localPlaylist = [
 		duration: 180,
 	},
 	{
-		id: 3,
+		id: 4,
 		title: "春雷の頃",
 		artist: "22/7",
 		cover: "assets/music/cover/cl.jpg",
 		url: "assets/music/url/cl.mp3",
 		duration: 200,
-	},
-	{
-		id: 4,
-		title: "愿 (One More Wish) (中文版)",
-		artist: "未知艺术家",
-		cover: "assets/music/cover/cl.jpg",
-		url: "assets/music/url/愿 (One More Wish) (中文版).mp3",
-		duration: 240,
 	},
 ];
 
