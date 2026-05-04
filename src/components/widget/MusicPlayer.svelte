@@ -101,6 +101,14 @@ const localPlaylist = [
 		url: "assets/music/url/cl.mp3",
 		duration: 200,
 	},
+	{
+		id: 4,
+		title: "愿 (One More Wish) (中文版)",
+		artist: "未知艺术家",
+		cover: "assets/music/cover/cl.jpg",
+		url: "assets/music/url/愿 (One More Wish) (中文版).mp3",
+		duration: 240,
+	},
 ];
 
 // 从localStorage加载音量设置
