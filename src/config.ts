@@ -443,10 +443,20 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
 
 export const commentConfig: CommentConfig = {
 	enable: true, // 启用评论功能。当设置为 false 时，评论组件将不会显示在文章区域。
+	provider: "twikoo", // 可选 "twikoo" | "giscus"
 	twikoo: {
 		envId: "https://review.xryua.dpdns.org",
 		lang: SITE_LANG,
 	},
+	// giscus: {
+	// 	repo: "owner/repo",
+	// 	repoId: "R_xxx",
+	// 	category: "Announcements",
+	// 	categoryId: "DIC_xxx",
+	// 	mapping: "pathname",
+	// 	theme: "preferred_color_scheme",
+	// 	lang: "zh-CN",
+	// },
 };
 
 export const shareConfig: ShareConfig = {
