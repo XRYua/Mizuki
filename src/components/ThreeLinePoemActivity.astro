@@ -8,42 +8,171 @@ const twikooConfig = {
 };
 ---
 
-<section class="three-line-poem-activity card-base mb-6 onload-animation">
-<div class="activity-orb activity-orb-left"></div>
+<section class="three-line-poem-activity onload-animation">
+	<div class="activity-backdrop"></div>
+	<div class="activity-orb activity-orb-left"></div>
 	<div class="activity-orb activity-orb-right"></div>
+	<div class="activity-grid">
+		<div class="activity-intro liquid-panel">
+			<p class="activity-eyebrow">immersive writing space</p>
+			<h1>三行情书写</h1>
+			<p class="activity-lead">一句给自己，一句给远方，一句给还没说出口的心事。把今晚的风、月色和犹豫，都写成三行。</p>
 
-	<div class="activity-header">
-		<p class="activity-eyebrow">Q</p>
-		<h2>三行情书写</h2>
-		<p>你可以在这里写下三行：一句给自己，一句给远方，一句给还没说出口的心事</p>
-	</div>
-
-	<div class="activity-note">
-		<p>今夜把词句借给风吧：写一小段星光，写一口迟到的晚安，写一封没寄出的心事</p>
-	</div>
-
-	<div class="activity-board">
-	    <div class="board-head">
-			<div>
-				<p class="board-kicker">Twikoo Guestbook</p>
-				<div class="board-title">言</div>
+			<div class="activity-note">
+				<p>在这里，你仍然可以像从前一样留下评论、点赞互动；旧的本地留言也会被重新读出，不会再被新样式淹没。</p>
 			</div>
-			<span class="board-badge">Custom Styled</span>
+
+			<div class="activity-stats">
+				<div class="stat-chip">
+					<span>氛围</span>
+					<strong>沉浸式</strong>
+				</div>
+				<div class="stat-chip">
+					<span>评论</span>
+					<strong>液态玻璃</strong>
+				</div>
+				<div class="stat-chip">
+					<span>旧留言</span>
+					<strong>已恢复</strong>
+				</div>
+			</div>
 		</div>
-        <p class="board-tip">使用昵称 + 邮箱标识后即可落笔，也可以给喜欢的字句点一个赞</p>
-		<div id="three-line-twikoo" class="twikoo-host"></div>
-        <div class="board-shell">
-			<div class="board-shell-glow"></div>
-			<div id="three-line-twikoo" class="twikoo-host"></div>
+
+		<div class="activity-board liquid-panel">
+			<div class="board-head">
+				<div>
+					<p class="board-kicker">Comment Studio</p>
+					<h2 class="board-title">言叶浮岛</h2>
+				</div>
+				<span class="board-badge">Liquid Glass</span>
+			</div>
+			<p class="board-tip">保留原来的配色，但让输入、预览、评论卡片与操作区都拥有更柔和的流动质感；同时恢复旧版本地留言榜。</p>
+
+			<div class="legacy-board liquid-subpanel">
+				<div class="legacy-header">
+					<div>
+						<p class="legacy-kicker">Legacy Notes</p>
+						<h3>旧留言回声</h3>
+					</div>
+					<button type="button" id="legacy-refresh" class="mini-action">刷新旧留言</button>
+				</div>
+				<p class="legacy-tip">这里会显示你早期保存在浏览器里的三行情书，并继续保留原本的点赞逻辑。</p>
+				<ul id="legacy-poem-list" class="legacy-list"></ul>
+			</div>
+
+			<div class="board-shell liquid-subpanel">
+				<div class="board-shell-glow"></div>
+				<div id="three-line-twikoo" class="twikoo-host"></div>
+			</div>
 		</div>
 	</div>
-
-	<p class="activity-ending">愿每一封情，都能被温柔读到。</p>
 </section>
 
 <script is:inline src="/scroll-protection.js"></script>
 <script is:inline src="/assets/js/twikoo.all.min.js"></script>
 <script is:inline define:vars={{ twikooConfig }}>
+	const LEGACY_STORAGE_KEY = "mizuki-three-line-poems";
+
+	function escapeHtml(text) {
+		return String(text)
+			.replaceAll("&", "&amp;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;")
+			.replaceAll('"', "&quot;");
+	}
+
+	function maskEmail(email) {
+		const [name, domain] = String(email || "").split("@");
+		if (!name || !domain) return "***";
+		return `${name.slice(0, 2)}***@${domain}`;
+	}
+
+	function readLegacyPoems() {
+		try {
+			const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+			const parsed = raw ? JSON.parse(raw) : [];
+			return Array.isArray(parsed) ? parsed : [];
+		} catch (error) {
+			console.warn("[ThreeLinePoem] 旧留言读取失败", error);
+			return [];
+		}
+	}
+
+	function saveLegacyPoems(poems) {
+		localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(poems));
+	}
+
+	function renderLegacyPoems() {
+		const legacyList = document.getElementById("legacy-poem-list");
+		if (!legacyList) return;
+
+		const poems = readLegacyPoems().sort(
+			(a, b) => (b.likes || 0) - (a.likes || 0) || (b.createdAt || 0) - (a.createdAt || 0),
+		);
+
+		if (!poems.length) {
+			legacyList.innerHTML = `
+				<li class="legacy-empty">
+					<p>还没有读取到旧留言。</p>
+					<span>如果你曾在旧版页面写过三行情书，只要浏览器本地缓存仍在，这里就会恢复显示。</span>
+				</li>
+			`;
+			return;
+		}
+
+		legacyList.innerHTML = poems
+			.map((item, index) => {
+				const content = escapeHtml(item.content || "").replaceAll("\n", "<br>");
+				const likes = Number(item.likes || 0);
+				const createdAt = item.createdAt
+					? new Date(item.createdAt).toLocaleDateString("zh-CN", {
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+					})
+					: "旧时刻";
+				return `
+					<li class="legacy-item" data-id="${escapeHtml(item.id || String(index))}">
+						<div class="legacy-meta">
+							<span class="legacy-rank">#${index + 1}</span>
+							<strong>${escapeHtml(item.name || "匿名访客")}</strong>
+							<span class="legacy-email">${maskEmail(item.email)}</span>
+						</div>
+						<p class="legacy-content">${content}</p>
+						<div class="legacy-actions">
+							<span class="legacy-date">${createdAt}</span>
+							<button class="mini-action legacy-like" type="button" data-id="${escapeHtml(item.id || String(index))}">❤ ${likes}</button>
+						</div>
+					</li>
+				`;
+			})
+			.join("");
+	}
+
+	function initLegacyPoems() {
+		renderLegacyPoems();
+		const legacyList = document.getElementById("legacy-poem-list");
+		const refreshButton = document.getElementById("legacy-refresh");
+		if (legacyList && !legacyList.dataset.bound) {
+			legacyList.dataset.bound = "true";
+			legacyList.addEventListener("click", (event) => {
+				const target = event.target.closest(".legacy-like");
+				if (!target) return;
+				const id = target.getAttribute("data-id");
+				const poems = readLegacyPoems();
+				const targetPoem = poems.find((item, index) => String(item.id || index) === id);
+				if (!targetPoem) return;
+				targetPoem.likes = Number(targetPoem.likes || 0) + 1;
+				saveLegacyPoems(poems);
+				renderLegacyPoems();
+			});
+		}
+		if (refreshButton && !refreshButton.dataset.bound) {
+			refreshButton.dataset.bound = "true";
+			refreshButton.addEventListener("click", renderLegacyPoems);
+		}
+	}
+
 	function initThreeLineTwikoo() {
 		if (typeof twikoo === "undefined") {
 			setTimeout(initThreeLineTwikoo, 400);
@@ -64,10 +193,20 @@ const twikooConfig = {
 			});
 	}
 
-	document.addEventListener("DOMContentLoaded", initThreeLineTwikoo);
+	function setupThreeLinePoemPage() {
+		initLegacyPoems();
+		initThreeLineTwikoo();
+	}
+
+	document.addEventListener("DOMContentLoaded", setupThreeLinePoemPage);
+	window.addEventListener("storage", (event) => {
+		if (event.key === LEGACY_STORAGE_KEY) {
+			renderLegacyPoems();
+		}
+	});
 	if (window.swup?.hooks) {
 		window.swup.hooks.on("content:replace", () => {
-			setTimeout(initThreeLineTwikoo, 200);
+			setTimeout(setupThreeLinePoemPage, 200);
 		});
 	}
 </script>
@@ -75,304 +214,289 @@ const twikooConfig = {
 <style>
 	.three-line-poem-activity {
 		position: relative;
+		min-height: calc(100vh - 8rem);
+		padding: clamp(1.25rem, 2vw, 2rem);
 		overflow: hidden;
-		padding: 1.4rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
-		border-radius: 1.5rem;
-		background:
-			radial-gradient(circle at top left, color-mix(in oklab, var(--primary) 18%, transparent) 0, transparent 42%),
-			radial-gradient(circle at 85% 15%, color-mix(in oklab, #f472b6 20%, transparent) 0, transparent 28%),
-			linear-gradient(145deg, color-mix(in oklab, var(--primary) 12%, var(--card-bg)) 0%, color-mix(in oklab, var(--card-bg) 94%, white 6%) 55%, color-mix(in oklab, var(--card-bg) 90%, var(--primary) 10%) 100%);
-		box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
 		isolation: isolate;
 	}
 
-	.activity-orb {
+	.activity-backdrop {
 		position: absolute;
-		z-index: -1;
-		border-radius: 999px;
-		filter: blur(10px);
-		opacity: 0.7;
+		inset: 0;
+		z-index: -3;
+		background:
+			radial-gradient(circle at 15% 20%, color-mix(in oklab, var(--primary) 20%, transparent) 0, transparent 28%),
+			radial-gradient(circle at 82% 18%, color-mix(in oklab, #f472b6 18%, transparent) 0, transparent 24%),
+			radial-gradient(circle at 50% 100%, color-mix(in oklab, var(--primary) 12%, transparent) 0, transparent 36%),
+			linear-gradient(180deg, color-mix(in oklab, var(--page-bg) 75%, var(--card-bg) 25%) 0%, color-mix(in oklab, var(--card-bg) 90%, var(--page-bg) 10%) 100%);
 	}
 
-	.activity-orb-left {
-		width: 10rem;
-		height: 10rem;
-		top: -3rem;
-		left: -2rem;
-		background: color-mix(in oklab, var(--primary) 28%, transparent);
+	.activity-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.2fr);
+		gap: 1.25rem;
+		align-items: stretch;
+		max-width: 1400px;
+		margin: 0 auto;
 	}
 
-	.activity-orb-right {
-		width: 8rem;
-		height: 8rem;
-		bottom: 2rem;
-		right: -1.5rem;
-		background: color-mix(in oklab, #f472b6 28%, transparent);
+	.liquid-panel,
+	.liquid-subpanel {
+		position: relative;
+		border: 1px solid color-mix(in oklab, var(--primary) 18%, rgba(255, 255, 255, 0.28));
+		background:
+			linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.12)),
+			linear-gradient(145deg, color-mix(in oklab, var(--card-bg) 78%, white 22%) 0%, color-mix(in oklab, var(--card-bg) 58%, transparent) 100%);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.5),
+			inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+			0 24px 60px rgba(15, 23, 42, 0.12);
+		backdrop-filter: blur(26px) saturate(165%);
+		-webkit-backdrop-filter: blur(26px) saturate(165%);
 	}
 
-	.activity-header h2 {
-		margin: 0.25rem 0;
-		font-size: clamp(1.5rem, 2vw, 1.95rem);
-		letter-spacing: 0.03em;
-	}
-    .activity-header > p:last-child {
-		max-width: 42rem;
-		margin: 0;
-		line-height: 1.85;
-		color: color-mix(in oklab, var(--text-normal) 88%, white 12%);
+	.activity-intro {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 1.2rem;
+		padding: clamp(1.5rem, 3vw, 3rem);
+		border-radius: 2rem;
+		min-height: 100%;
 	}
 
 	.activity-eyebrow {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
 		margin: 0;
-		padding: 0.38rem 0.72rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
-		border-radius: 999px;
-		background: color-mix(in oklab, var(--primary) 10%, transparent);
-		color: var(--primary);
-		font-size: 0.82rem;
+		font-size: 0.8rem;
 		font-weight: 800;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.24em;
 		text-transform: uppercase;
-	}
-    .activity-note {
-        margin-top: 1rem;
-		padding: 0.95rem 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 22%, transparent);
-		border-radius: 1rem;
-		background: linear-gradient(135deg, color-mix(in oklab, var(--card-bg) 92%, var(--primary) 8%) 0%, color-mix(in oklab, var(--card-bg) 82%, white 18%) 100%);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
-		backdrop-filter: blur(8px);
+		color: var(--primary);
 	}
 
-	.activity-note p {
+	.activity-intro h1 {
 		margin: 0;
-        opacity: 0.92;
+		font-size: clamp(2.5rem, 5vw, 4.8rem);
+		line-height: 1.02;
+		letter-spacing: 0.04em;
+	}
+
+	.activity-lead {
+		margin: 0;
+		font-size: clamp(1rem, 1.5vw, 1.15rem);
+		line-height: 2;
+		max-width: 34rem;
+		color: color-mix(in oklab, var(--text-normal) 86%, white 14%);
+	}
+
+	.activity-note {
+		padding: 1rem 1.1rem;
+		border-radius: 1.35rem;
+		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 10%, rgba(255, 255, 255, 0.4)) 0%, rgba(255, 255, 255, 0.18) 100%);
+		border: 1px solid color-mix(in oklab, var(--primary) 20%, transparent);
+	}
+
+	.activity-note p,
+	.board-tip,
+	.legacy-tip {
+		margin: 0;
 		line-height: 1.9;
+		color: color-mix(in oklab, var(--text-normal) 82%, white 18%);
 	}
 
-	.activity-meta-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.9rem;
-		margin-top: 1rem;
-	}
-    .meta-card {
-		padding: 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 18%, transparent);
-		border-radius: 1.1rem;
-		background: color-mix(in oklab, var(--card-bg) 88%, white 12%);
-		box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+	.activity-stats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.85rem;
 	}
 
-	.meta-label {
+	.stat-chip {
+		min-width: 9rem;
+		padding: 0.9rem 1rem;
+		border-radius: 1.25rem;
+		background: linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
+		border: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
+	}
+
+	.stat-chip span,
+	.board-kicker,
+	.legacy-kicker {
 		display: block;
-		margin-bottom: 0.45rem;
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
+		margin-bottom: 0.3rem;
+		font-size: 0.72rem;
+		font-weight: 800;
+		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: color-mix(in oklab, var(--text-muted) 85%, var(--primary) 15%);
+		color: color-mix(in oklab, var(--text-muted) 76%, var(--primary) 24%);
 	}
 
-	.meta-card strong {
-		display: block;
+	.stat-chip strong {
 		font-size: 1rem;
 	}
 
-	.meta-card p {
-		margin: 0.55rem 0 0;
-		font-size: 0.92rem;
-		line-height: 1.7;
-		opacity: 0.85;
-	}
-
 	.activity-board {
-		margin-top: 1.15rem;
+		padding: clamp(1rem, 2.3vw, 1.6rem);
+		border-radius: 2rem;
 	}
 
-	.board-head {
+	.board-head,
+	.legacy-header,
+	.legacy-actions,
+	.legacy-meta {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 0.75rem;
 	}
 
-	.board-kicker {
-		margin: 0 0 0.28rem;
-		font-size: 0.75rem;
-		font-weight: 800;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: color-mix(in oklab, var(--text-muted) 78%, var(--primary) 22%);
+	.board-title,
+	.legacy-header h3 {
+		margin: 0;
+		font-size: clamp(1.35rem, 2vw, 1.75rem);
 	}
 
-	.board-title {
-		font-size: 1.18rem;
-		font-weight: 800;
-	}
-
-	.board-badge {
-		padding: 0.45rem 0.8rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 28%, transparent);
+	.board-badge,
+	.mini-action {
+		padding: 0.55rem 0.95rem;
 		border-radius: 999px;
-		background: color-mix(in oklab, var(--primary) 10%, transparent);
+		border: 1px solid color-mix(in oklab, var(--primary) 22%, transparent);
+		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 14%, rgba(255, 255, 255, 0.45)) 0%, rgba(255, 255, 255, 0.12) 100%);
 		color: var(--primary);
-		font-size: 0.78rem;
+		font-size: 0.8rem;
 		font-weight: 800;
-		white-space: nowrap;
+		transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 	}
 
-    .board-tip {
-        margin: 0.6rem 0 1rem;
-		opacity: 0.8;
-		font-size: 0.94rem;
-		line-height: 1.75;
+	button.mini-action:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 14px 24px rgba(15, 23, 42, 0.08);
+		border-color: color-mix(in oklab, var(--primary) 40%, transparent);
+	}
+
+	.legacy-board,
+	.board-shell {
+		margin-top: 1rem;
+		padding: 1rem;
+		border-radius: 1.5rem;
+	}
+
+	.legacy-list {
+		list-style: none;
+		padding: 0;
+		margin: 1rem 0 0;
+		display: grid;
+		gap: 0.75rem;
+		max-height: 24rem;
+		overflow: auto;
+	}
+
+	.legacy-item,
+	.legacy-empty {
+		padding: 1rem;
+		border-radius: 1.25rem;
+		border: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
+		background: linear-gradient(145deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.16));
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	}
+
+	.legacy-empty p,
+	.legacy-content {
+		margin: 0;
+		line-height: 1.9;
+	}
+
+	.legacy-empty span,
+	.legacy-email,
+	.legacy-date {
+		font-size: 0.84rem;
+		opacity: 0.76;
+	}
+
+	.legacy-rank {
+		color: var(--primary);
+		font-weight: 800;
+	}
+
+	.legacy-email {
+		margin-left: auto;
+	}
+
+	.legacy-actions {
+		margin-top: 0.85rem;
 	}
 
 	.board-shell {
-		position: relative;
-		padding: 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 16%, transparent);
-		border-radius: 1.35rem;
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.38));
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.65),
-			0 20px 40px rgba(15, 23, 42, 0.1);
-		backdrop-filter: blur(14px);
+		overflow: hidden;
 	}
 
 	.board-shell-glow {
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
-		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 8%, transparent), transparent 30%, color-mix(in oklab, #f472b6 12%, transparent));
+		background: radial-gradient(circle at top right, color-mix(in oklab, var(--primary) 10%, transparent), transparent 35%), radial-gradient(circle at bottom left, color-mix(in oklab, #f472b6 12%, transparent), transparent 30%);
 		pointer-events: none;
 	}
 
 	.twikoo-host {
-        position: relative;
-		padding: 0.35rem;
-		border-radius: 1rem;
-		background: color-mix(in oklab, var(--card-bg) 86%, white 14%);
+		position: relative;
+		z-index: 1;
 	}
 
-	.twikoo-host :global(.tk-comments-container) {
-		margin-top: 1rem;
-		padding-top: 1rem;
-		border-top: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
+	.activity-orb {
+		position: absolute;
+		z-index: -2;
+		border-radius: 999px;
+		filter: blur(18px);
+		opacity: 0.7;
 	}
 
-	.twikoo-host :global(.tk-submit) {
-		padding: 1rem;
-		border: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
-		border-radius: 1rem;
-		background: linear-gradient(180deg, color-mix(in oklab, white 88%, var(--primary) 12%), color-mix(in oklab, white 94%, var(--card-bg) 6%));
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	.activity-orb-left {
+		width: 18rem;
+		height: 18rem;
+		top: -5rem;
+		left: -4rem;
+		background: color-mix(in oklab, var(--primary) 22%, transparent);
 	}
 
-	.twikoo-host :global(.tk-row.actions) {
-		margin-top: 0.85rem;
-		padding-top: 0.85rem;
-		border-top: 1px dashed color-mix(in oklab, var(--primary) 16%, transparent);
+	.activity-orb-right {
+		width: 16rem;
+		height: 16rem;
+		bottom: -4rem;
+		right: -3rem;
+		background: color-mix(in oklab, #f472b6 18%, transparent);
 	}
 
-	.twikoo-host :global(.tk-avatar),
-	.twikoo-host :global(.tk-avatar img) {
-		border-radius: 1rem;
-	}
-
-	.twikoo-host :global(.tk-input),
-	.twikoo-host :global(.el-input__inner),
-	.twikoo-host :global(.el-textarea__inner) {
-		border-radius: 0.9rem !important;
-		border-color: color-mix(in oklab, var(--primary) 16%, transparent) !important;
-		background: rgba(255, 255, 255, 0.9) !important;
-		box-shadow: none !important;
-		transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-	}
-
-	.twikoo-host :global(.tk-input:focus),
-	.twikoo-host :global(.el-input__inner:focus),
-	.twikoo-host :global(.el-textarea__inner:focus) {
-		border-color: color-mix(in oklab, var(--primary) 55%, transparent) !important;
-		box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 14%, transparent) !important;
-		transform: translateY(-1px);
-	}
-
-	.twikoo-host :global(.tk-preview-container),
-	.twikoo-host :global(.tk-comment) {
-		border: 1px solid color-mix(in oklab, var(--primary) 14%, transparent);
-		border-radius: 1rem;
-		background: color-mix(in oklab, white 92%, var(--card-bg) 8%);
-		box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
-	}
-
-	.twikoo-host :global(.tk-comment) {
-		padding: 0.85rem 0.95rem;
-		margin-bottom: 0.85rem;
-	}
-
-    .twikoo-host :global(.tk-comment .tk-content) {
-		line-height: 1.85;
-		font-size: 0.97rem;
-	}
-
-	.twikoo-host :global(.tk-action-icon),
-	.twikoo-host :global(.tk-icon.__comments),
-	.twikoo-host :global(.tk-comments-title > span) {
-		color: color-mix(in oklab, var(--text-normal) 82%, var(--primary) 18%);
-	}
-
-	.twikoo-host :global(.tk-extras),
-	.twikoo-host :global(.tk-meta) {
-		opacity: 0.8;
-	}
-
-	.twikoo-host :global(.el-button),
-	.twikoo-host :global(.tk-submit-action-icon.__submit) {
-		border-radius: 999px !important;
-	}
-
-	.twikoo-host :global(.el-button--primary),
-	.twikoo-host :global(.tk-preview),
-	.twikoo-host :global(.tk-submit-action-icon.__submit) {
-		border: none !important;
-		background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 88%, white 12%), color-mix(in oklab, var(--primary) 68%, #f472b6 32%)) !important;
-		box-shadow: 0 12px 24px color-mix(in oklab, var(--primary) 22%, transparent);
-	}
-
-	.twikoo-host :global(.tk-replies .tk-comment) {
-		background: color-mix(in oklab, white 86%, var(--primary) 14%);
-	}
-
-    .activity-ending {
-		margin: 1rem 0 0;
-        font-weight: 700;
-		letter-spacing: 0.03em;
-		color: color-mix(in oklab, var(--text-normal) 78%, var(--primary) 22%);
-	}
-
-	@media (max-width: 768px) {
-		.three-line-poem-activity {
-			padding: 1rem;
-			border-radius: 1.2rem;
-		}
-
-		.activity-meta-grid {
+	@media (max-width: 1080px) {
+		.activity-grid {
 			grid-template-columns: 1fr;
 		}
+	}
 
-		.board-head {
-			align-items: flex-start;
-			flex-direction: column;
+	@media (max-width: 720px) {
+		.three-line-poem-activity {
+			padding: 0.75rem;
+			min-height: auto;
 		}
 
-		.board-shell {
-			padding: 0.8rem;
+		.activity-intro,
+		.activity-board {
+			border-radius: 1.5rem;
+		}
+
+		.board-head,
+		.legacy-header,
+		.legacy-meta,
+		.legacy-actions {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.legacy-email {
+			margin-left: 0;
+		}
+
+		.activity-intro h1 {
+			font-size: clamp(2rem, 12vw, 3.2rem);
 		}
 	}
 </style>
