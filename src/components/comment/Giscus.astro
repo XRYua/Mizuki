@@ -1,0 +1,27 @@
+---
+import { commentConfig } from "@/config";
+
+const giscus = commentConfig?.giscus;
+---
+
+{giscus && (
+	<div class="giscus-wrapper">
+		<script
+			is:inline
+			src="https://giscus.app/client.js"
+			data-repo={giscus.repo}
+			data-repo-id={giscus.repoId}
+			data-category={giscus.category}
+			data-category-id={giscus.categoryId}
+			data-mapping={giscus.mapping ?? "pathname"}
+			data-strict={giscus.strict ?? "0"}
+			data-reactions-enabled={giscus.reactionsEnabled ?? "1"}
+			data-emit-metadata={giscus.emitMetadata ?? "0"}
+			data-input-position={giscus.inputPosition ?? "top"}
+			data-theme={giscus.theme ?? "preferred_color_scheme"}
+			data-lang={giscus.lang ?? "zh-CN"}
+			crossorigin="anonymous"
+			async
+		></script>
+	</div>
+)}

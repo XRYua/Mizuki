@@ -272,12 +272,28 @@ export type PermalinkConfig = {
 
 export type CommentConfig = {
 	enable: boolean; // 是否启用评论功能
+	provider?: "twikoo" | "giscus"; // 评论服务提供商，默认 twikoo
 	twikoo?: TwikooConfig;
+	giscus?: GiscusConfig;
 };
 
 type TwikooConfig = {
 	envId: string;
 	region?: string;
+	lang?: string;
+};
+
+type GiscusConfig = {
+	repo: string;
+	repoId: string;
+	category: string;
+	categoryId: string;
+	mapping?: "pathname" | "url" | "title" | "og:title" | "specific";
+	strict?: "0" | "1";
+	reactionsEnabled?: "0" | "1";
+	emitMetadata?: "0" | "1";
+	inputPosition?: "top" | "bottom";
+	theme?: string;
 	lang?: string;
 };
 
