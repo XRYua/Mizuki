@@ -81,7 +81,7 @@ const localPlaylist = [
 		id: 1,
 		title: "愿 (One More Wish) (中文版)",
 		artist: "Hiyuki",
-		cover: "assets/music/cover/cl.jpg",
+		cover: "assets/music/cover/愿 (One More Wish) (中文版).png",
 		url: "assets/music/url/愿 (One More Wish) (中文版).mp3",
 		duration: 240,
 	},
