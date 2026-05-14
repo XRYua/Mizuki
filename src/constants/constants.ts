@@ -22,3 +22,8 @@ export const UNCATEGORIZED = "uncategorized";
 export const WALLPAPER_BANNER = "banner";
 export const WALLPAPER_FULLSCREEN = "fullscreen";
 export const WALLPAPER_NONE = "none";
+
+// Mutsumi link config
+export const MUTSUMI_LINK_URL =
+	"https://ais-dev-uumggvum5pnz3qtiyyq3mj-67776104769.us-east1.run.app";
+export const MUTSUMI_LINK_MODE: "internal" | "external" = "internal";
